@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery, useMutation } from "convex/react";
+import { useQuery, useMutation, useConvexAuth } from "convex/react";
 import { useParams } from "next/navigation";
 import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
@@ -13,11 +13,18 @@ import { useState } from "react";
 
 export default function OrderDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const { isAuthenticated, isLoading: isAuthLoading } = useConvexAuth();
 
+  // Public queries (no auth needed)
   const order = useQuery(api.orders.getById, { id: id as Id<"orders"> });
   const items = useQuery(api.orderItems.listByOrder, { orderId: id as Id<"orders"> });
-  const myItems = useQuery(api.orderItems.myItemsForOrder, { orderId: id as Id<"orders"> });
-  const me = useQuery(api.users.getMe);
+
+  // Auth-gated queries — skip until Convex has the token
+  const myItems = useQuery(
+    api.orderItems.myItemsForOrder,
+    isAuthenticated ? { orderId: id as Id<"orders"> } : "skip"
+  );
+  const me = useQuery(api.users.getMe, isAuthenticated ? {} : "skip");
   const creator = useQuery(
     api.users.getById,
     order ? { id: order.createdBy } : "skip"

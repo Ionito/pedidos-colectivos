@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery } from "convex/react";
+import { useQuery, useConvexAuth } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { OrderList } from "@/components/orders/OrderList";
 import { UserButton } from "@clerk/nextjs";
@@ -10,8 +10,21 @@ import { useState } from "react";
 type StatusFilter = "open" | "closed" | undefined;
 
 export default function OrdersPage() {
+  const { isAuthenticated, isLoading } = useConvexAuth();
   const [filter, setFilter] = useState<StatusFilter>("open");
-  const orders = useQuery(api.orders.list, { status: filter });
+  // Skip the query until Convex has the auth token ready
+  const orders = useQuery(
+    api.orders.list,
+    isAuthenticated ? { status: filter } : "skip"
+  );
+
+  if (isLoading) {
+    return (
+      <main className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-gray-50">
