@@ -101,6 +101,34 @@ export const update = mutation({
   },
 });
 
+// Only the creator can delete the order (also removes all order items)
+export const remove = mutation({
+  args: { id: v.id("orders") },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("No autenticado");
+
+    const order = await ctx.db.get(args.id);
+    if (!order) throw new Error("Pedido no encontrado");
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
+      .unique();
+    if (!user || order.createdBy !== user._id) throw new Error("Sin permiso");
+
+    // Delete all order items first
+    const items = await ctx.db
+      .query("orderItems")
+      .withIndex("by_order", (q) => q.eq("orderId", args.id))
+      .collect();
+    await Promise.all(items.map((item) => ctx.db.delete(item._id)));
+
+    // Delete the order
+    return ctx.db.delete(args.id);
+  },
+});
+
 export const close = mutation({
   args: { id: v.id("orders") },
   handler: async (ctx, args) => {

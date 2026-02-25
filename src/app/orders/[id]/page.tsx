@@ -32,8 +32,10 @@ export default function OrderDetailPage() {
 
   const upsertItem = useMutation(api.orderItems.upsertItem);
   const closeOrder = useMutation(api.orders.close);
+  const removeOrder = useMutation(api.orders.remove);
 
   const [isClosing, setIsClosing] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
 
   // ── Loading skeleton ──────────────────────────────────────────────
@@ -79,6 +81,18 @@ export default function OrderDetailPage() {
       await closeOrder({ id: id as Id<"orders"> });
     } finally {
       setIsClosing(false);
+    }
+  }
+
+  async function handleDelete() {
+    if (!confirm(`¿Borrar el pedido "${order?.title}"?\n\nEsta acción es permanente y eliminará todos los datos del pedido.`)) return;
+    setIsDeleting(true);
+    try {
+      await removeOrder({ id: id as Id<"orders"> });
+      window.location.href = "/orders";
+    } catch {
+      alert("No se pudo borrar el pedido. Intentá de nuevo.");
+      setIsDeleting(false);
     }
   }
 
@@ -176,14 +190,25 @@ export default function OrderDetailPage() {
             </div>
 
             {/* Owner actions */}
-            {isOwner && isOpen && (
-              <button
-                onClick={handleClose}
-                disabled={isClosing}
-                className="w-full border border-red-300 text-red-500 py-2.5 rounded-xl text-sm font-medium min-h-[44px] disabled:opacity-50"
-              >
-                {isClosing ? "Cerrando..." : "Cerrar pedido"}
-              </button>
+            {isOwner && (
+              <div className="flex gap-2 pt-1">
+                {isOpen && (
+                  <button
+                    onClick={handleClose}
+                    disabled={isClosing || isDeleting}
+                    className="flex-1 border border-gray-300 text-gray-600 py-2.5 rounded-xl text-sm font-medium min-h-[44px] disabled:opacity-50"
+                  >
+                    {isClosing ? "Cerrando..." : "Cerrar pedido"}
+                  </button>
+                )}
+                <button
+                  onClick={handleDelete}
+                  disabled={isDeleting || isClosing}
+                  className="flex-1 bg-red-50 border border-red-200 text-red-500 py-2.5 rounded-xl text-sm font-medium min-h-[44px] disabled:opacity-50"
+                >
+                  {isDeleting ? "Borrando..." : "Borrar pedido"}
+                </button>
+              </div>
             )}
 
             {deadlinePassed && isOpen && (
