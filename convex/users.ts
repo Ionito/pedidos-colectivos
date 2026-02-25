@@ -26,6 +26,13 @@ export const upsertUser = mutation({
   },
 });
 
+export const getById = query({
+  args: { id: v.id("users") },
+  handler: async (ctx, args) => {
+    return ctx.db.get(args.id);
+  },
+});
+
 export const getMe = query({
   args: {},
   handler: async (ctx) => {

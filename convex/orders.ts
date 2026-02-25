@@ -74,6 +74,33 @@ export const create = mutation({
   },
 });
 
+// Only the creator can update title, description, deadline and products
+export const update = mutation({
+  args: {
+    id: v.id("orders"),
+    title: v.string(),
+    description: v.string(),
+    deadline: v.number(),
+    products: v.array(productValidator),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("No autenticado");
+
+    const order = await ctx.db.get(args.id);
+    if (!order) throw new Error("Pedido no encontrado");
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
+      .unique();
+    if (!user || order.createdBy !== user._id) throw new Error("Sin permiso");
+
+    const { id, ...fields } = args;
+    return ctx.db.patch(id, fields);
+  },
+});
+
 export const close = mutation({
   args: { id: v.id("orders") },
   handler: async (ctx, args) => {
