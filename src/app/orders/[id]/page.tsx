@@ -168,7 +168,7 @@ export default function OrderDetailPage() {
           </span>
         </header>
 
-        <div className="px-4 py-5 max-w-lg mx-auto space-y-6">
+        <div className="px-4 py-5 max-w-2xl mx-auto space-y-6">
 
           {/* Order info card */}
           <div className="bg-white rounded-2xl border border-gray-200 px-4 py-4 space-y-3">
