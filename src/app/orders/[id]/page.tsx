@@ -7,9 +7,11 @@ import { Id } from "../../../../convex/_generated/dataModel";
 import { ProductList } from "@/components/orders/ProductList";
 import { ParticipantList } from "@/components/orders/ParticipantList";
 import { EditOrderModal } from "@/components/orders/EditOrderModal";
-import { formatDate, formatDeadline } from "@/lib/formatters";
+import { formatDate, formatDeadline, formatCurrency } from "@/lib/formatters";
 import Link from "next/link";
 import { useState } from "react";
+
+type Tab = "productos" | "participantes" | "totales";
 
 export default function OrderDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -37,6 +39,7 @@ export default function OrderDetailPage() {
   const [isClosing, setIsClosing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
+  const [activeTab, setActiveTab] = useState<Tab>("productos");
 
   // ── Loading skeleton ──────────────────────────────────────────────
   if (order === undefined) {
@@ -95,6 +98,34 @@ export default function OrderDetailPage() {
       setIsDeleting(false);
     }
   }
+
+  // ── Totales por producto ──────────────────────────────────────────
+  const productMap: Record<string, { title: string; price: number; unit: string }> = {};
+  for (const p of order.products) {
+    productMap[p.id] = { title: p.title, price: p.price, unit: p.unit };
+  }
+
+  const totalsByProduct: Record<string, { title: string; price: number; unit: string; totalQty: number }> = {};
+  for (const item of (items ?? [])) {
+    if (item.quantity === 0) continue;
+    const product = productMap[item.productId];
+    if (!product) continue;
+    if (!totalsByProduct[item.productId]) {
+      totalsByProduct[item.productId] = { ...product, totalQty: 0 };
+    }
+    totalsByProduct[item.productId].totalQty += item.quantity;
+  }
+  const totalsRows = Object.entries(totalsByProduct);
+  const grandTotal = totalsRows.reduce(
+    (sum, [, row]) => sum + row.price * row.totalQty,
+    0
+  );
+
+  const tabs: { id: Tab; label: string }[] = [
+    { id: "productos", label: "Productos" },
+    { id: "participantes", label: "Participantes" },
+    { id: "totales", label: "Totales" },
+  ];
 
   return (
     <>
@@ -218,18 +249,79 @@ export default function OrderDetailPage() {
             )}
           </div>
 
-          {/* Products */}
-          <ProductList
-            products={order.products}
-            myItems={myItems ?? []}
-            orderStatus={order.status}
-            onQuantityChange={(productId, quantity) =>
-              upsertItem({ orderId: id as Id<"orders">, productId, quantity })
-            }
-          />
+          {/* Tabs */}
+          <div className="flex bg-gray-100 rounded-xl p-1 gap-1">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex-1 py-2 text-sm font-medium rounded-lg transition-colors min-h-[40px] ${
+                  activeTab === tab.id
+                    ? "bg-white text-gray-900 shadow-sm"
+                    : "text-gray-500 hover:text-gray-700"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
 
-          {/* Participants */}
-          <ParticipantList items={items ?? []} products={order.products} />
+          {/* Tab content */}
+          {activeTab === "productos" && (
+            <ProductList
+              products={order.products}
+              myItems={myItems ?? []}
+              orderStatus={order.status}
+              onQuantityChange={(productId, quantity) =>
+                upsertItem({ orderId: id as Id<"orders">, productId, quantity })
+              }
+            />
+          )}
+
+          {activeTab === "participantes" && (
+            <ParticipantList items={items ?? []} products={order.products} />
+          )}
+
+          {activeTab === "totales" && (
+            <section>
+              <h2 className="text-xs font-semibold text-gray-700 mb-3 uppercase tracking-wide">
+                Totales para el proveedor
+              </h2>
+              {totalsRows.length === 0 ? (
+                <div className="text-center py-8 text-gray-400">
+                  <p className="text-3xl mb-2">📦</p>
+                  <p className="text-sm">Nadie pidió nada todavía</p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {totalsRows.map(([productId, row]) => (
+                    <div
+                      key={productId}
+                      className="bg-white rounded-2xl border border-gray-200 px-4 py-3 flex items-center justify-between"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <p className="font-medium text-gray-900 text-sm">{row.title}</p>
+                        <p className="text-xs text-gray-400 mt-0.5">
+                          {row.totalQty} {row.unit} × {formatCurrency(row.price)}
+                        </p>
+                      </div>
+                      <span className="text-sm font-semibold text-blue-600 shrink-0 ml-3">
+                        {formatCurrency(row.price * row.totalQty)}
+                      </span>
+                    </div>
+                  ))}
+
+                  {/* Grand total */}
+                  <div className="bg-blue-600 rounded-2xl px-4 py-3 flex items-center justify-between mt-3">
+                    <span className="text-sm font-semibold text-white">Total general</span>
+                    <span className="text-base font-bold text-white">
+                      {formatCurrency(grandTotal)}
+                    </span>
+                  </div>
+                </div>
+              )}
+            </section>
+          )}
         </div>
       </main>
 
