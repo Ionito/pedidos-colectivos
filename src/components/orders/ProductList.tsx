@@ -52,7 +52,10 @@ export function ProductList({
 
   const totalPages = Math.ceil(filtered.length / pageSize);
   const effectivePage = totalPages > 0 ? Math.min(page, totalPages - 1) : 0;
-  const paginated = filtered.slice(effectivePage * pageSize, (effectivePage + 1) * pageSize);
+  const paginated = filtered.slice(
+    effectivePage * pageSize,
+    (effectivePage + 1) * pageSize
+  );
 
   function handleSearch(value: string) {
     setSearch(value);
@@ -96,7 +99,7 @@ export function ProductList({
           <p className="text-sm">Sin resultados para &ldquo;{search}&rdquo;</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {paginated.map((product) => {
             const qty = myQuantityMap[product.id] ?? 0;
 
@@ -116,7 +119,9 @@ export function ProductList({
                   )}
                   <p className="text-sm text-gray-500 mt-1">
                     {formatCurrency(product.price)}{" "}
-                    {product.unit && <span className="text-gray-400">/ {product.unit}</span>}
+                    {product.unit && (
+                      <span className="text-gray-400">/ {product.unit}</span>
+                    )}
                   </p>
                 </div>
 
@@ -169,8 +174,18 @@ export function ProductList({
             disabled={effectivePage === 0}
             className="flex items-center gap-1 text-sm text-gray-500 disabled:opacity-30 hover:text-gray-800 transition-colors min-h-[44px] px-2"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 19l-7-7 7-7"
+              />
             </svg>
             Anterior
           </button>
@@ -185,8 +200,18 @@ export function ProductList({
             className="flex items-center gap-1 text-sm text-gray-500 disabled:opacity-30 hover:text-gray-800 transition-colors min-h-[44px] px-2"
           >
             Siguiente
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5l7 7-7 7"
+              />
             </svg>
           </button>
         </div>
