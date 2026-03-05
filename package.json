@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "npx convex deploy --cmd 'next build'",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "vitest"
   },
   "dependencies": {
     "@clerk/localizations": "^3.37.0",
@@ -15,7 +16,8 @@
     "next": "16.1.6",
     "react": "19.2.3",
     "react-dom": "19.2.3",
-    "uuid": "^13.0.0"
+    "uuid": "^13.0.0",
+    "vitest": "^4.0.18"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

@@ -13,7 +13,7 @@ export interface ParsedProduct {
 //   _Mix de mariscos $35000 kg
 //   Mejillón pelado $2300 x 100grs.
 const PRODUCT_REGEX =
-  /^[_\-\*\•]?\s*(.+?)\s*\$\s*([\d.,]+)\s*(?:x\s*)?([^$\n]+?)\s*\.?\s*$/;
+  /^[_\-\*\•]?\s*(.+?)\s*\$\s*([\d.,]+)(?:\s*(?:x\s*)?([^$\n]+?))?\s*\.?\s*$/;
 
 function parsePrice(raw: string): number {
   // Argentine peso: $3.500 means 3500 (dot as thousands separator)
@@ -40,7 +40,7 @@ export function parseProductList(text: string): {
       continue;
     }
 
-    const [, title, priceRaw, unit] = match;
+    const [, title, priceRaw, unit = ""] = match;
     const price = parsePrice(priceRaw);
 
     if (isNaN(price) || price <= 0) {
