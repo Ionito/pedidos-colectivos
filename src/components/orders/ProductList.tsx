@@ -2,8 +2,9 @@
 
 import { formatCurrency } from "@/lib/formatters";
 import { useState } from "react";
+import { useGridCols } from "@/hooks/useGridCols";
 
-const PAGE_SIZE = 20;
+const ROWS = 7; // filas visibles por página
 
 interface Product {
   id: string;
@@ -33,6 +34,8 @@ export function ProductList({
 }: Props) {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(0);
+  const cols = useGridCols();
+  const pageSize = ROWS * cols;
 
   const myQuantityMap: Record<string, number> = {};
   for (const item of myItems) {
@@ -47,8 +50,9 @@ export function ProductList({
     );
   });
 
-  const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
-  const paginated = filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+  const totalPages = Math.ceil(filtered.length / pageSize);
+  const effectivePage = totalPages > 0 ? Math.min(page, totalPages - 1) : 0;
+  const paginated = filtered.slice(effectivePage * pageSize, (effectivePage + 1) * pageSize);
 
   function handleSearch(value: string) {
     setSearch(value);
@@ -92,7 +96,7 @@ export function ProductList({
           <p className="text-sm">Sin resultados para &ldquo;{search}&rdquo;</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
           {paginated.map((product) => {
             const qty = myQuantityMap[product.id] ?? 0;
 
@@ -162,7 +166,7 @@ export function ProductList({
         <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-100">
           <button
             onClick={() => setPage((p) => Math.max(0, p - 1))}
-            disabled={page === 0}
+            disabled={effectivePage === 0}
             className="flex items-center gap-1 text-sm text-gray-500 disabled:opacity-30 hover:text-gray-800 transition-colors min-h-[44px] px-2"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -172,12 +176,12 @@ export function ProductList({
           </button>
 
           <span className="text-xs text-gray-400">
-            {page + 1} / {totalPages}
+            {effectivePage + 1} / {totalPages}
           </span>
 
           <button
             onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
-            disabled={page === totalPages - 1}
+            disabled={effectivePage === totalPages - 1}
             className="flex items-center gap-1 text-sm text-gray-500 disabled:opacity-30 hover:text-gray-800 transition-colors min-h-[44px] px-2"
           >
             Siguiente

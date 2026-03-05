@@ -42,3 +42,6 @@ next-env.d.ts
 
 # convex generated files are committed so Vercel can build
 # convex/_generated/
+
+# clerk configuration (can include secrets)
+/.clerk/
