@@ -112,7 +112,7 @@ export function ProductList({
                   )}
                   <p className="text-sm text-gray-500 mt-1">
                     {formatCurrency(product.price)}{" "}
-                    <span className="text-gray-400">/ {product.unit}</span>
+                    {product.unit && <span className="text-gray-400">/ {product.unit}</span>}
                   </p>
                 </div>
 

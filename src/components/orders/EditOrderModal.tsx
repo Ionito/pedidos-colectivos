@@ -203,7 +203,7 @@ export function EditOrderModal({ order, onClose }: Props) {
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-gray-800 truncate">{p.title}</p>
                         <p className="text-xs text-gray-400">
-                          {formatCurrency(p.price)} / {p.unit}
+                          {formatCurrency(p.price)}{p.unit ? ` / ${p.unit}` : ""}
                         </p>
                       </div>
                       <button
@@ -241,7 +241,7 @@ export function EditOrderModal({ order, onClose }: Props) {
                     {parsed.products.map((p) => (
                       <div key={p.id} className="bg-green-50 border border-green-200 rounded-lg px-3 py-1.5 flex justify-between text-xs">
                         <span className="font-medium text-gray-800">{p.title}</span>
-                        <span className="text-gray-500">{formatCurrency(p.price)} / {p.unit}</span>
+                        <span className="text-gray-500">{formatCurrency(p.price)}{p.unit ? ` / ${p.unit}` : ""}</span>
                       </div>
                     ))}
                     {parsed.errors.map((e, i) => (

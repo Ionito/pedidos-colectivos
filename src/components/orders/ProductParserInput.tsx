@@ -65,7 +65,7 @@ export function ProductParserInput({ onProductsParsed }: Props) {
                 {p.title}
               </span>
               <span className="text-sm text-gray-500 shrink-0 ml-2">
-                {formatCurrency(p.price)} / {p.unit}
+                {formatCurrency(p.price)}{p.unit ? ` / ${p.unit}` : ""}
               </span>
             </div>
           ))}
