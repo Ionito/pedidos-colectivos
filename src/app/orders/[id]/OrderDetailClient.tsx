@@ -103,21 +103,6 @@ export default function OrderDetailPage() {
 
   async function handleShare() {
     const url = window.location.href;
-    // Try native share sheet first (mobile)
-    if (typeof navigator !== "undefined" && navigator.share) {
-      try {
-        await navigator.share({
-          title: order!.title,
-          text: `Sumate al pedido: ${order!.title}`,
-          url,
-        });
-        return;
-      } catch (err) {
-        // AbortError = user cancelled, no fallback needed
-        if ((err as Error).name === "AbortError") return;
-      }
-    }
-    // Desktop fallback: copy link to clipboard
     try {
       await navigator.clipboard.writeText(url);
     } catch {
@@ -211,24 +196,6 @@ export default function OrderDetailPage() {
             </h1>
           </div>
 
-          {/* Share button — visible to everyone */}
-          <button
-            type="button"
-            onClick={handleShare}
-            className="min-h-[44px] min-w-[44px] flex items-center justify-center transition-colors text-gray-400 hover:text-blue-600"
-            aria-label="Compartir pedido"
-          >
-            {linkCopied ? (
-              <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-              </svg>
-            ) : (
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-              </svg>
-            )}
-          </button>
-
           {/* Edit button — only for owner */}
           {isOwner && (
             <button
@@ -302,6 +269,33 @@ export default function OrderDetailPage() {
                 )}
               </div>
             </div>
+
+            {/* Share */}
+            <button
+              type="button"
+              onClick={handleShare}
+              className={`w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium border transition-all min-h-[44px] ${
+                linkCopied
+                  ? "bg-green-50 border-green-200 text-green-600"
+                  : "bg-white border-gray-200 text-gray-600 hover:border-blue-300 hover:text-blue-600"
+              }`}
+            >
+              {linkCopied ? (
+                <>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                  ¡Link copiado!
+                </>
+              ) : (
+                <>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                  </svg>
+                  Compartir pedido
+                </>
+              )}
+            </button>
 
             {/* Owner actions */}
             {isOwner && (
