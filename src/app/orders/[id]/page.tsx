@@ -123,7 +123,7 @@ export default function OrderDetailPage() {
   );
 
   function buildSummary() {
-    const lines: string[] = [`📦 ${order.title}`, ""];
+    const lines: string[] = [`📦 ${order!.title}`, ""];
     for (const [, row] of totalsRows) {
       const subtotal = formatCurrency(row.price * row.totalQty);
       lines.push(`• ${row.title}: ${row.totalQty} ${row.unit} × ${formatCurrency(row.price)} = ${subtotal}`);
