@@ -41,7 +41,7 @@ export const myItemsForOrder = query({
   },
 });
 
-// Remove a single order item (owner of the order only)
+// Remove a single order item (only the user who added it)
 export const removeItem = mutation({
   args: { itemId: v.id("orderItems") },
   handler: async (ctx, args) => {
@@ -51,14 +51,11 @@ export const removeItem = mutation({
     const item = await ctx.db.get(args.itemId);
     if (!item) throw new Error("Item no encontrado");
 
-    const order = await ctx.db.get(item.orderId);
-    if (!order) throw new Error("Pedido no encontrado");
-
     const user = await ctx.db
       .query("users")
       .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
       .unique();
-    if (!user || order.createdBy !== user._id) throw new Error("Sin permiso");
+    if (!user || item.userId !== user._id) throw new Error("Sin permiso");
 
     return ctx.db.delete(args.itemId);
   },
