@@ -356,7 +356,12 @@ export default function OrderDetailPage() {
           )}
 
           {activeTab === "participantes" && (
-            <ParticipantList items={items ?? []} products={order.products} />
+            <ParticipantList
+              items={items ?? []}
+              products={order.products}
+              meId={me?._id}
+              orderId={id as string}
+            />
           )}
 
           {activeTab === "totales" && (

@@ -41,6 +41,50 @@ export const myItemsForOrder = query({
   },
 });
 
+// Remove a single order item (only the user who added it)
+export const removeItem = mutation({
+  args: { itemId: v.id("orderItems") },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("No autenticado");
+
+    const item = await ctx.db.get(args.itemId);
+    if (!item) throw new Error("Item no encontrado");
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
+      .unique();
+    if (!user || item.userId !== user._id) throw new Error("Sin permiso");
+
+    return ctx.db.delete(args.itemId);
+  },
+});
+
+// Remove all items for a user in an order (only that user themselves)
+export const removeUserItems = mutation({
+  args: { orderId: v.id("orders"), userId: v.id("users") },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("No autenticado");
+
+    const me = await ctx.db
+      .query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
+      .unique();
+    if (!me || me._id !== args.userId) throw new Error("Sin permiso");
+
+    const items = await ctx.db
+      .query("orderItems")
+      .withIndex("by_user_and_order", (q) =>
+        q.eq("userId", args.userId).eq("orderId", args.orderId)
+      )
+      .collect();
+
+    await Promise.all(items.map((item) => ctx.db.delete(item._id)));
+  },
+});
+
 // Set quantity for a product in an order (0 = remove)
 export const upsertItem = mutation({
   args: {
