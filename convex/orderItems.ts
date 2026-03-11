@@ -115,6 +115,53 @@ export const setItemUnavailable = mutation({
   },
 });
 
+// Order owner upserts an item on behalf of any participant
+export const upsertItemForUser = mutation({
+  args: {
+    orderId: v.id("orders"),
+    userId: v.id("users"),
+    productId: v.string(),
+    quantity: v.number(),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("No autenticado");
+
+    const me = await ctx.db
+      .query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
+      .unique();
+    if (!me) throw new Error("Usuario no encontrado");
+
+    const order = await ctx.db.get(args.orderId);
+    if (!order) throw new Error("Pedido no encontrado");
+    if (order.createdBy !== me._id) throw new Error("Sin permiso");
+
+    const allUserItems = await ctx.db
+      .query("orderItems")
+      .withIndex("by_user_and_order", (q) =>
+        q.eq("userId", args.userId).eq("orderId", args.orderId)
+      )
+      .collect();
+
+    const existing = allUserItems.find((i) => i.productId === args.productId);
+
+    if (args.quantity <= 0) {
+      if (existing) await ctx.db.delete(existing._id);
+      return;
+    }
+    if (existing) {
+      return ctx.db.patch(existing._id, { quantity: args.quantity });
+    }
+    return ctx.db.insert("orderItems", {
+      orderId: args.orderId,
+      userId: args.userId,
+      productId: args.productId,
+      quantity: args.quantity,
+    });
+  },
+});
+
 // Set quantity for a product in an order (0 = remove)
 export const upsertItem = mutation({
   args: {
