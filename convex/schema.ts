@@ -33,6 +33,7 @@ export default defineSchema({
     userId: v.id("users"),
     productId: v.string(), // matches product.id (UUID string)
     quantity: v.number(),
+    unavailable: v.optional(v.boolean()), // marked by order owner when product is out of stock
   })
     .index("by_order", ["orderId"])
     .index("by_user_and_order", ["userId", "orderId"]),
