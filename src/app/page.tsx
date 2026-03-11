@@ -3,11 +3,12 @@
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { OrderList } from "@/components/orders/OrderList";
-import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import { useAuth, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
 
 export default function HomePage() {
   const orders = useQuery(api.orders.listOpen);
+  const { isSignedIn } = useAuth();
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -17,23 +18,23 @@ export default function HomePage() {
           <p className="text-xs text-gray-400">Pedidos Colectivos Angiru</p>
         </div>
 
-        <SignedOut>
+        {!isSignedIn && (
           <Link
             href="/sign-in"
             className="bg-blue-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold min-h-[44px] flex items-center"
           >
             Ingresar
           </Link>
-        </SignedOut>
+        )}
 
-        <SignedIn>
+        {isSignedIn && (
           <div className="flex items-center gap-3">
             <Link href="/orders" className="text-sm text-blue-600 font-medium">
               Mis pedidos
             </Link>
             <UserButton />
           </div>
-        </SignedIn>
+        )}
       </header>
 
       <div className="px-4 py-6 max-w-lg mx-auto">
@@ -51,7 +52,7 @@ export default function HomePage() {
           emptyMessage="No hay pedidos abiertos por ahora"
         />
 
-        <SignedOut>
+        {!isSignedIn && (
           <div className="mt-8 bg-blue-50 rounded-2xl p-5 text-center">
             <p className="text-sm text-gray-600 mb-3">
               Ingresá para sumarte a pedidos o crear el tuyo
@@ -63,7 +64,7 @@ export default function HomePage() {
               Ingresar con Google o Facebook
             </Link>
           </div>
-        </SignedOut>
+        )}
       </div>
     </main>
   );
