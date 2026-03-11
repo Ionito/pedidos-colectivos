@@ -29,11 +29,11 @@ interface Product {
 interface Props {
   items: ItemWithUser[];
   products: Product[];
-  isOwner?: boolean;
+  meId?: string;
   orderId?: string;
 }
 
-export function ParticipantList({ items, products, isOwner, orderId }: Props) {
+export function ParticipantList({ items, products, meId, orderId }: Props) {
   const removeItem = useMutation(api.orderItems.removeItem);
   const removeUserItems = useMutation(api.orderItems.removeUserItems);
 
@@ -121,7 +121,7 @@ export function ParticipantList({ items, products, isOwner, orderId }: Props) {
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  {isOwner && orderId && (
+                  {meId === userId && orderId && (
                     <button
                       onClick={() => handleRemoveUserItems(userId, userName)}
                       className="text-xs text-red-400 hover:text-red-600 border border-red-200 hover:border-red-400 rounded-lg px-2 py-0.5 transition-colors"
@@ -152,7 +152,7 @@ export function ParticipantList({ items, products, isOwner, orderId }: Props) {
                           x{item.quantity} ·{" "}
                           {formatCurrency(product.price * item.quantity)}
                         </span>
-                        {isOwner && (
+                        {meId === item.userId && (
                           <button
                             onClick={() => handleRemoveItem(item._id)}
                             className="text-red-300 hover:text-red-500 transition-colors"

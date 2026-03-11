@@ -359,7 +359,7 @@ export default function OrderDetailPage() {
             <ParticipantList
               items={items ?? []}
               products={order.products}
-              isOwner={!!isOwner}
+              meId={me?._id}
               orderId={id as string}
             />
           )}
