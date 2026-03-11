@@ -65,6 +65,7 @@ function AddProductModal({
     return init;
   });
   const [saving, setSaving] = useState(false);
+  const [search, setSearch] = useState("");
 
   // Cerrar con Escape
   useEffect(() => {
@@ -118,6 +119,12 @@ function AddProductModal({
     return (quantities[p.id] ?? 0) !== original;
   });
 
+  const filteredProducts = search.trim()
+    ? products.filter((p) =>
+        p.title.toLowerCase().includes(search.trim().toLowerCase())
+      )
+    : products;
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-end sm:items-center justify-center"
@@ -144,9 +151,34 @@ function AddProductModal({
           </button>
         </div>
 
+        {/* Buscador */}
+        <div className="px-4 py-2 border-b border-gray-100 shrink-0">
+          <div className="flex items-center gap-2 bg-gray-100 rounded-xl px-3 py-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400 shrink-0">
+              <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Buscar producto..."
+              className="bg-transparent text-sm text-gray-700 placeholder-gray-400 outline-none flex-1"
+              autoFocus
+            />
+            {search && (
+              <button onClick={() => setSearch("")} className="text-gray-400 hover:text-gray-600">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+              </button>
+            )}
+          </div>
+        </div>
+
         {/* Lista de productos */}
         <div className="overflow-y-auto flex-1 px-4 py-3 space-y-2">
-          {products.map((product) => {
+          {filteredProducts.length === 0 && (
+            <p className="text-center text-sm text-gray-400 py-6">Sin resultados</p>
+          )}
+          {filteredProducts.map((product) => {
             const qty = quantities[product.id] ?? 0;
             return (
               <div
