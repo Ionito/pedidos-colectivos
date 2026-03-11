@@ -123,27 +123,32 @@ export default function OrderDetailPage() {
     productMap[p.id] = { title: p.title, price: p.price, unit: p.unit };
   }
 
-  const totalsByProduct: Record<string, { title: string; price: number; unit: string; totalQty: number }> = {};
+  const totalsByProduct: Record<string, { title: string; price: number; unit: string; availableQty: number; unavailableQty: number }> = {};
   for (const item of (items ?? [])) {
     if (item.quantity === 0) continue;
     const product = productMap[item.productId];
     if (!product) continue;
     if (!totalsByProduct[item.productId]) {
-      totalsByProduct[item.productId] = { ...product, totalQty: 0 };
+      totalsByProduct[item.productId] = { ...product, availableQty: 0, unavailableQty: 0 };
     }
-    totalsByProduct[item.productId].totalQty += item.quantity;
+    if (item.unavailable) {
+      totalsByProduct[item.productId].unavailableQty += item.quantity;
+    } else {
+      totalsByProduct[item.productId].availableQty += item.quantity;
+    }
   }
   const totalsRows = Object.entries(totalsByProduct);
   const grandTotal = totalsRows.reduce(
-    (sum, [, row]) => sum + row.price * row.totalQty,
+    (sum, [, row]) => sum + row.price * row.availableQty,
     0
   );
 
   function buildSummary() {
     const lines: string[] = [`📦 ${order!.title}`, ""];
     for (const [, row] of totalsRows) {
-      const subtotal = formatCurrency(row.price * row.totalQty);
-      lines.push(`• ${row.title}: ${row.totalQty} ${row.unit} × ${formatCurrency(row.price)} = ${subtotal}`);
+      if (row.availableQty === 0) continue; // excluir totalmente no disponibles
+      const subtotal = formatCurrency(row.price * row.availableQty);
+      lines.push(`• ${row.title}: ${row.availableQty} ${row.unit} × ${formatCurrency(row.price)} = ${subtotal}`);
     }
     lines.push("");
     lines.push(`💰 Total: ${formatCurrency(grandTotal)}`);
@@ -360,6 +365,7 @@ export default function OrderDetailPage() {
               items={items ?? []}
               products={order.products}
               meId={me?._id}
+              isOwner={!!isOwner}
               orderId={id as string}
             />
           )}
@@ -405,22 +411,29 @@ export default function OrderDetailPage() {
                 </div>
               ) : (
                 <div className="space-y-2">
-                  {totalsRows.map(([productId, row]) => (
-                    <div
-                      key={productId}
-                      className="bg-white rounded-2xl border border-gray-200 px-4 py-3 flex items-center justify-between"
-                    >
-                      <div className="min-w-0 flex-1">
-                        <p className="font-medium text-gray-900 text-sm">{row.title}</p>
-                        <p className="text-xs text-gray-400 mt-0.5">
-                          {row.totalQty} {row.unit} × {formatCurrency(row.price)}
-                        </p>
+                  {totalsRows.map(([productId, row]) => {
+                    const allUnavailable = row.availableQty === 0;
+                    return (
+                      <div
+                        key={productId}
+                        className={`bg-white rounded-2xl border px-4 py-3 flex items-center justify-between ${
+                          allUnavailable ? "border-gray-100 opacity-50" : "border-gray-200"
+                        }`}
+                      >
+                        <div className="min-w-0 flex-1">
+                          <p className={`font-medium text-sm ${allUnavailable ? "line-through text-gray-400" : "text-gray-900"}`}>
+                            {row.title}
+                          </p>
+                          <p className={`text-xs mt-0.5 ${allUnavailable ? "line-through text-gray-300" : "text-gray-400"}`}>
+                            {allUnavailable ? row.unavailableQty : row.availableQty} {row.unit} × {formatCurrency(row.price)}
+                          </p>
+                        </div>
+                        <span className={`text-sm font-semibold shrink-0 ml-3 ${allUnavailable ? "line-through text-gray-300" : "text-blue-600"}`}>
+                          {formatCurrency(row.price * (allUnavailable ? row.unavailableQty : row.availableQty))}
+                        </span>
                       </div>
-                      <span className="text-sm font-semibold text-blue-600 shrink-0 ml-3">
-                        {formatCurrency(row.price * row.totalQty)}
-                      </span>
-                    </div>
-                  ))}
+                    );
+                  })}
 
                   {/* Grand total */}
                   <div className="bg-blue-600 rounded-2xl px-4 py-3 flex items-center justify-between mt-3">

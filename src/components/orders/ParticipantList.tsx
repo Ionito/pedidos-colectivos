@@ -16,6 +16,7 @@ interface ItemWithUser {
   productId: string;
   quantity: number;
   userId: string;
+  unavailable?: boolean;
   user: User | null;
 }
 
@@ -30,12 +31,14 @@ interface Props {
   items: ItemWithUser[];
   products: Product[];
   meId?: string;
+  isOwner?: boolean;
   orderId?: string;
 }
 
-export function ParticipantList({ items, products, meId, orderId }: Props) {
+export function ParticipantList({ items, products, meId, isOwner, orderId }: Props) {
   const removeItem = useMutation(api.orderItems.removeItem);
   const removeUserItems = useMutation(api.orderItems.removeUserItems);
+  const setItemUnavailable = useMutation(api.orderItems.setItemUnavailable);
 
   const productMap: Record<string, Product> = {};
   for (const p of products) {
@@ -43,8 +46,7 @@ export function ParticipantList({ items, products, meId, orderId }: Props) {
   }
 
   // Group items by userId
-  const byUser: Record<string, { user: User | null; items: ItemWithUser[] }> =
-    {};
+  const byUser: Record<string, { user: User | null; items: ItemWithUser[] }> = {};
   for (const item of items) {
     const key = item.userId;
     if (!byUser[key]) {
@@ -82,6 +84,13 @@ export function ParticipantList({ items, products, meId, orderId }: Props) {
     });
   }
 
+  async function handleToggleUnavailable(itemId: string, current: boolean) {
+    await setItemUnavailable({
+      itemId: itemId as Id<"orderItems">,
+      unavailable: !current,
+    });
+  }
+
   return (
     <section>
       <h2 className="text-xs font-semibold text-gray-700 mb-3 uppercase tracking-wide">
@@ -89,19 +98,24 @@ export function ParticipantList({ items, products, meId, orderId }: Props) {
       </h2>
       <div className="space-y-3">
         {participants.map(({ user, items: userItems }) => {
+          const userId = user?._id ?? userItems[0].userId;
+          const userName = user?.name ?? "Usuario";
+          const isSelf = meId === userId;
+          const canDeleteOrder = isOwner || isSelf;
+
+          // Total excluye ítems no disponibles
           const total = userItems.reduce((sum, item) => {
+            if (item.unavailable) return sum;
             const product = productMap[item.productId];
             return sum + (product ? product.price * item.quantity : 0);
           }, 0);
-
-          const userId = user?._id ?? userItems[0].userId;
-          const userName = user?.name ?? "Usuario";
 
           return (
             <div
               key={userId}
               className="bg-white rounded-2xl border border-gray-200 px-4 py-3"
             >
+              {/* Encabezado del participante */}
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   {user?.imageUrl ? (
@@ -121,7 +135,7 @@ export function ParticipantList({ items, products, meId, orderId }: Props) {
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  {meId === userId && orderId && (
+                  {canDeleteOrder && orderId && (
                     <button
                       onClick={() => handleRemoveUserItems(userId, userName)}
                       className="text-xs text-red-400 hover:text-red-600 border border-red-200 hover:border-red-400 rounded-lg px-2 py-0.5 transition-colors"
@@ -135,40 +149,53 @@ export function ParticipantList({ items, products, meId, orderId }: Props) {
                 </div>
               </div>
 
+              {/* Ítems del participante */}
               <div className="space-y-1 pl-10">
                 {userItems.map((item) => {
                   const product = productMap[item.productId];
                   if (!product) return null;
+                  const isUnavailable = !!item.unavailable;
+
                   return (
                     <div
                       key={item._id}
                       className="flex items-center justify-between text-xs text-gray-500"
                     >
-                      <span className="truncate flex-1 mr-2">
+                      <span className={`truncate flex-1 mr-2 ${isUnavailable ? "line-through text-gray-300" : ""}`}>
                         {product.title}
                       </span>
-                      <div className="flex items-center gap-2 shrink-0">
-                        <span>
-                          x{item.quantity} ·{" "}
-                          {formatCurrency(product.price * item.quantity)}
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <span className={isUnavailable ? "line-through text-gray-300" : ""}>
+                          x{item.quantity} · {formatCurrency(product.price * item.quantity)}
                         </span>
-                        {meId === item.userId && (
+
+                        {/* Botón "no disponible" — solo owner del pedido */}
+                        {isOwner && (
+                          <button
+                            onClick={() => handleToggleUnavailable(item._id, isUnavailable)}
+                            className={`transition-colors rounded ${
+                              isUnavailable
+                                ? "text-orange-400 hover:text-orange-600"
+                                : "text-gray-300 hover:text-orange-400"
+                            }`}
+                            title={isUnavailable ? "Marcar como disponible" : "Marcar como no disponible"}
+                          >
+                            {/* Ícono ban/slash */}
+                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <circle cx="12" cy="12" r="10" />
+                              <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" />
+                            </svg>
+                          </button>
+                        )}
+
+                        {/* Tacho — solo el dueño del ítem */}
+                        {isSelf && (
                           <button
                             onClick={() => handleRemoveItem(item._id)}
                             className="text-red-300 hover:text-red-500 transition-colors"
                             aria-label={`Eliminar ${product.title}`}
                           >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="14"
-                              height="14"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                               <polyline points="3 6 5 6 21 6" />
                               <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
                               <path d="M10 11v6" />

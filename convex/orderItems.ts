@@ -61,7 +61,7 @@ export const removeItem = mutation({
   },
 });
 
-// Remove all items for a user in an order (only that user themselves)
+// Remove all items for a user in an order (that user OR the order owner)
 export const removeUserItems = mutation({
   args: { orderId: v.id("orders"), userId: v.id("users") },
   handler: async (ctx, args) => {
@@ -72,7 +72,14 @@ export const removeUserItems = mutation({
       .query("users")
       .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
       .unique();
-    if (!me || me._id !== args.userId) throw new Error("Sin permiso");
+    if (!me) throw new Error("Usuario no encontrado");
+
+    const order = await ctx.db.get(args.orderId);
+    if (!order) throw new Error("Pedido no encontrado");
+
+    const isOwner = order.createdBy === me._id;
+    const isSelf = me._id === args.userId;
+    if (!isOwner && !isSelf) throw new Error("Sin permiso");
 
     const items = await ctx.db
       .query("orderItems")
@@ -82,6 +89,29 @@ export const removeUserItems = mutation({
       .collect();
 
     await Promise.all(items.map((item) => ctx.db.delete(item._id)));
+  },
+});
+
+// Toggle unavailable flag on an item (order owner only)
+export const setItemUnavailable = mutation({
+  args: { itemId: v.id("orderItems"), unavailable: v.boolean() },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("No autenticado");
+
+    const item = await ctx.db.get(args.itemId);
+    if (!item) throw new Error("Item no encontrado");
+
+    const order = await ctx.db.get(item.orderId);
+    if (!order) throw new Error("Pedido no encontrado");
+
+    const me = await ctx.db
+      .query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
+      .unique();
+    if (!me || order.createdBy !== me._id) throw new Error("Sin permiso");
+
+    return ctx.db.patch(args.itemId, { unavailable: args.unavailable });
   },
 });
 
