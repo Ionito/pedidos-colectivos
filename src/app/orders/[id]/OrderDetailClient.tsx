@@ -375,6 +375,7 @@ export default function OrderDetailPage() {
               meId={me?._id}
               isOwner={!!isOwner}
               orderId={id as string}
+              shippingCost={order.shippingCost}
             />
           )}
 
