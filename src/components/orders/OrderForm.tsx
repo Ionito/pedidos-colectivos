@@ -14,6 +14,7 @@ export function OrderForm() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [deadline, setDeadline] = useState("");
+  const [shippingCost, setShippingCost] = useState("");
   const [products, setProducts] = useState<ParsedProduct[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -35,10 +36,12 @@ export function OrderForm() {
     setError(null);
 
     try {
+      const parsedShipping = parseFloat(shippingCost.replace(",", "."));
       const id = await createOrder({
         title: title.trim(),
         description: description.trim(),
         deadline: new Date(deadline).getTime(),
+        shippingCost: !isNaN(parsedShipping) && parsedShipping > 0 ? parsedShipping : undefined,
         products,
       });
       router.push(`/orders/${id}`);
@@ -91,6 +94,24 @@ export function OrderForm() {
           className="w-full border border-gray-300 rounded-xl px-3 py-3 text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent min-h-[48px]"
           required
         />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Costo de envío
+        </label>
+        <div className="relative">
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-base pointer-events-none">$</span>
+          <input
+            type="number"
+            value={shippingCost}
+            onChange={(e) => setShippingCost(e.target.value)}
+            placeholder="0"
+            min="0"
+            step="1"
+            className="w-full border border-gray-300 rounded-xl pl-7 pr-3 py-3 text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent min-h-[48px]"
+          />
+        </div>
       </div>
 
       <ProductParserInput onProductsParsed={handleProductsParsed} />

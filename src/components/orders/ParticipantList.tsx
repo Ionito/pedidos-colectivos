@@ -34,6 +34,7 @@ interface Props {
   meId?: string;
   isOwner?: boolean;
   orderId?: string;
+  shippingCost?: number;
 }
 
 interface ModalTarget {
@@ -230,12 +231,13 @@ function AddProductModal({
 }
 
 // ── Componente principal ──────────────────────────────────────────────────────
-export function ParticipantList({ items, products, meId, isOwner, orderId }: Props) {
+export function ParticipantList({ items, products, meId, isOwner, orderId, shippingCost }: Props) {
   const removeItem = useMutation(api.orderItems.removeItem);
   const removeUserItems = useMutation(api.orderItems.removeUserItems);
   const setItemUnavailable = useMutation(api.orderItems.setItemUnavailable);
 
   const [modalTarget, setModalTarget] = useState<ModalTarget | null>(null);
+  const [copiedUserId, setCopiedUserId] = useState<string | null>(null);
 
   const productMap: Record<string, Product> = {};
   for (const p of products) {
@@ -258,7 +260,7 @@ export function ParticipantList({ items, products, meId, isOwner, orderId }: Pro
     return (
       <section>
         <h2 className="text-xs font-semibold text-gray-700 mb-3 uppercase tracking-wide">
-          Participantes
+          Pedidos
         </h2>
         <div className="text-center py-8 text-gray-400">
           <p className="text-3xl mb-2">👥</p>
@@ -281,6 +283,46 @@ export function ParticipantList({ items, products, meId, isOwner, orderId }: Pro
     });
   }
 
+  async function handleShareUser(userId: string, userName: string, userItems: ItemWithUser[]) {
+    const lines: string[] = [`📋 Pedido de ${userName}`, ""];
+
+    let subtotal = 0;
+    for (const item of userItems) {
+      if (item.unavailable) continue;
+      const product = productMap[item.productId];
+      if (!product) continue;
+      const itemTotal = product.price * item.quantity;
+      subtotal += itemTotal;
+      lines.push(`• ${product.title} x${item.quantity} · ${formatCurrency(itemTotal)}`);
+    }
+
+    lines.push("");
+    lines.push(`Subtotal productos: ${formatCurrency(subtotal)}`);
+
+    let total = subtotal;
+    if (shippingCost && shippingCost > 0 && participants.length > 0) {
+      const proportional = Math.round(shippingCost / participants.length);
+      lines.push(`🚚 Envío proporcional: ${formatCurrency(proportional)} (${formatCurrency(shippingCost)} ÷ ${participants.length} participantes)`);
+      total += proportional;
+    }
+
+    lines.push(`💰 Total: ${formatCurrency(total)}`);
+
+    const text = lines.join("\n");
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+    }
+    setCopiedUserId(userId);
+    setTimeout(() => setCopiedUserId(null), 2500);
+  }
+
   async function handleToggleUnavailable(itemId: string, current: boolean) {
     await setItemUnavailable({
       itemId: itemId as Id<"orderItems">,
@@ -292,7 +334,7 @@ export function ParticipantList({ items, products, meId, isOwner, orderId }: Pro
     <>
       <section>
         <h2 className="text-xs font-semibold text-gray-700 mb-3 uppercase tracking-wide">
-          Participantes ({participants.length})
+          Pedidos ({participants.length})
         </h2>
         <div className="space-y-3">
           {participants.map(({ user, items: userItems }) => {
@@ -333,6 +375,30 @@ export function ParticipantList({ items, products, meId, isOwner, orderId }: Pro
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
+                    {/* Botón compartir resumen — solo owner */}
+                    {isOwner && (
+                      <button
+                        onClick={() => handleShareUser(userId, userName, userItems)}
+                        className={`flex items-center justify-center w-7 h-7 rounded-lg border transition-colors ${
+                          copiedUserId === userId
+                            ? "border-green-300 text-green-500"
+                            : "border-gray-200 text-gray-400 hover:border-blue-300 hover:text-blue-500"
+                        }`}
+                        title="Copiar resumen del pedido"
+                      >
+                        {copiedUserId === userId ? (
+                          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="20 6 9 17 4 12" />
+                          </svg>
+                        ) : (
+                          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+                            <polyline points="16 6 12 2 8 6" />
+                            <line x1="12" y1="2" x2="12" y2="15" />
+                          </svg>
+                        )}
+                      </button>
+                    )}
                     {/* Botón agregar producto — solo owner */}
                     {isOwner && orderId && (
                       <button

@@ -175,7 +175,7 @@ export default function OrderDetailPage() {
 
   const tabs: { id: Tab; label: string }[] = [
     { id: "productos", label: "Productos" },
-    { id: "participantes", label: "Participantes" },
+    { id: "participantes", label: "Pedidos" },
     { id: "totales", label: "Totales" },
   ];
 
@@ -244,6 +244,14 @@ export default function OrderDetailPage() {
                 {isOpen ? formatDeadline(order.deadline) : formatDate(order.deadline)}
               </span>
             </div>
+
+            {/* Shipping cost */}
+            {order.shippingCost != null && order.shippingCost > 0 && (
+              <div className="flex items-center gap-2 text-sm">
+                <span className="text-gray-400">🚚 Envío:</span>
+                <span className="text-gray-700">{formatCurrency(order.shippingCost)}</span>
+              </div>
+            )}
 
             {/* Creator info */}
             <div className="flex items-center gap-2 pt-1 border-t border-gray-100">
@@ -367,6 +375,7 @@ export default function OrderDetailPage() {
               meId={me?._id}
               isOwner={!!isOwner}
               orderId={id as string}
+              shippingCost={order.shippingCost}
             />
           )}
 

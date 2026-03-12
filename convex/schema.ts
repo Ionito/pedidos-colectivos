@@ -15,6 +15,7 @@ export default defineSchema({
     deadline: v.number(), // Unix timestamp ms
     createdBy: v.id("users"),
     status: v.union(v.literal("open"), v.literal("closed")),
+    shippingCost: v.optional(v.number()),
     products: v.array(
       v.object({
         id: v.string(), // client UUID
