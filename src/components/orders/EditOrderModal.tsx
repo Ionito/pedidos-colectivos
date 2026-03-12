@@ -21,6 +21,7 @@ interface Props {
     title: string;
     description: string;
     deadline: number;
+    shippingCost?: number;
     products: Product[];
   };
   onClose: () => void;
@@ -37,6 +38,9 @@ export function EditOrderModal({ order, onClose }: Props) {
   const [description, setDescription] = useState(order.description);
   const [deadline, setDeadline] = useState(
     new Date(order.deadline).toISOString().slice(0, 16)
+  );
+  const [shippingCost, setShippingCost] = useState(
+    order.shippingCost != null ? String(order.shippingCost) : ""
   );
 
   // ── Products state ────────────────────────────────────────────────
@@ -80,11 +84,13 @@ export function EditOrderModal({ order, onClose }: Props) {
     setIsSaving(true);
     setError(null);
     try {
+      const parsedShipping = parseFloat(shippingCost.replace(",", "."));
       await updateOrder({
         id: order._id,
         title: title.trim(),
         description: description.trim(),
         deadline: new Date(deadline).getTime(),
+        shippingCost: !isNaN(parsedShipping) && parsedShipping > 0 ? parsedShipping : undefined,
         products,
       });
       onClose();
@@ -180,6 +186,24 @@ export function EditOrderModal({ order, onClose }: Props) {
                   onChange={(e) => setDeadline(e.target.value)}
                   className="w-full border border-gray-300 rounded-xl px-3 py-3 text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent min-h-[48px]"
                 />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Costo de envío
+                </label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-base pointer-events-none">$</span>
+                  <input
+                    type="number"
+                    value={shippingCost}
+                    onChange={(e) => setShippingCost(e.target.value)}
+                    placeholder="0"
+                    min="0"
+                    step="1"
+                    className="w-full border border-gray-300 rounded-xl pl-7 pr-3 py-3 text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent min-h-[48px]"
+                  />
+                </div>
               </div>
             </div>
           )}

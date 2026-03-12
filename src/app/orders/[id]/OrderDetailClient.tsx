@@ -245,6 +245,14 @@ export default function OrderDetailPage() {
               </span>
             </div>
 
+            {/* Shipping cost */}
+            {order.shippingCost != null && order.shippingCost > 0 && (
+              <div className="flex items-center gap-2 text-sm">
+                <span className="text-gray-400">🚚 Envío:</span>
+                <span className="text-gray-700">{formatCurrency(order.shippingCost)}</span>
+              </div>
+            )}
+
             {/* Creator info */}
             <div className="flex items-center gap-2 pt-1 border-t border-gray-100">
               {creator?.imageUrl ? (

@@ -54,6 +54,7 @@ export const create = mutation({
     title: v.string(),
     description: v.string(),
     deadline: v.number(),
+    shippingCost: v.optional(v.number()),
     products: v.array(productValidator),
   },
   handler: async (ctx, args) => {
@@ -74,13 +75,14 @@ export const create = mutation({
   },
 });
 
-// Only the creator can update title, description, deadline and products
+// Only the creator can update title, description, deadline, shippingCost and products
 export const update = mutation({
   args: {
     id: v.id("orders"),
     title: v.string(),
     description: v.string(),
     deadline: v.number(),
+    shippingCost: v.optional(v.number()),
     products: v.array(productValidator),
   },
   handler: async (ctx, args) => {
