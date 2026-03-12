@@ -175,7 +175,7 @@ export default function OrderDetailPage() {
 
   const tabs: { id: Tab; label: string }[] = [
     { id: "productos", label: "Productos" },
-    { id: "participantes", label: "Participantes" },
+    { id: "participantes", label: "Pedidos" },
     { id: "totales", label: "Totales" },
   ];
 

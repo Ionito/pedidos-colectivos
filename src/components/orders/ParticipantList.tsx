@@ -258,7 +258,7 @@ export function ParticipantList({ items, products, meId, isOwner, orderId }: Pro
     return (
       <section>
         <h2 className="text-xs font-semibold text-gray-700 mb-3 uppercase tracking-wide">
-          Participantes
+          Pedidos
         </h2>
         <div className="text-center py-8 text-gray-400">
           <p className="text-3xl mb-2">👥</p>
@@ -292,7 +292,7 @@ export function ParticipantList({ items, products, meId, isOwner, orderId }: Pro
     <>
       <section>
         <h2 className="text-xs font-semibold text-gray-700 mb-3 uppercase tracking-wide">
-          Participantes ({participants.length})
+          Pedidos ({participants.length})
         </h2>
         <div className="space-y-3">
           {participants.map(({ user, items: userItems }) => {
