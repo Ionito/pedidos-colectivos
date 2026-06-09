@@ -37,7 +37,7 @@ export function ProductList({
 }: Props) {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(0);
-  const [viewMode, setViewMode] = useState<ViewMode>("grid");
+  const [viewMode, setViewMode] = useState<ViewMode>("table");
   const cols = useGridCols();
   const pageSize = viewMode === "grid" ? ROWS * cols : TABLE_PAGE_SIZE;
 
@@ -58,7 +58,7 @@ export function ProductList({
   const effectivePage = totalPages > 0 ? Math.min(page, totalPages - 1) : 0;
   const paginated = filtered.slice(
     effectivePage * pageSize,
-    (effectivePage + 1) * pageSize
+    (effectivePage + 1) * pageSize,
   );
 
   function handleSearch(value: string) {
@@ -101,7 +101,10 @@ export function ProductList({
         <div className="flex items-center bg-white border border-gray-200 rounded-xl overflow-hidden shrink-0">
           <button
             type="button"
-            onClick={() => { setViewMode("grid"); setPage(0); }}
+            onClick={() => {
+              setViewMode("grid");
+              setPage(0);
+            }}
             aria-label="Vista grilla"
             className={`p-2.5 transition-colors ${viewMode === "grid" ? "bg-blue-600 text-white" : "text-gray-400 hover:text-gray-700"}`}
           >
@@ -114,12 +117,25 @@ export function ProductList({
           </button>
           <button
             type="button"
-            onClick={() => { setViewMode("table"); setPage(0); }}
+            onClick={() => {
+              setViewMode("table");
+              setPage(0);
+            }}
             aria-label="Vista tabla"
             className={`p-2.5 transition-colors ${viewMode === "table" ? "bg-blue-600 text-white" : "text-gray-400 hover:text-gray-700"}`}
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M4 6h16M4 10h16M4 14h16M4 18h16"
+              />
             </svg>
           </button>
         </div>
@@ -204,7 +220,9 @@ export function ProductList({
             <thead>
               <tr className="border-b border-gray-100 text-xs font-semibold text-gray-500 uppercase tracking-wide">
                 <th className="text-left px-4 py-2.5">Producto</th>
-                <th className="text-right px-4 py-2.5 whitespace-nowrap">Precio</th>
+                <th className="text-right px-4 py-2.5 whitespace-nowrap">
+                  Precio
+                </th>
                 <th className="text-center px-4 py-2.5">Cantidad</th>
               </tr>
             </thead>
@@ -213,17 +231,26 @@ export function ProductList({
                 const qty = myQuantityMap[product.id] ?? 0;
 
                 return (
-                  <tr key={product.id} className="hover:bg-gray-50 transition-colors">
+                  <tr
+                    key={product.id}
+                    className="hover:bg-gray-50 transition-colors"
+                  >
                     <td className="px-4 py-3">
-                      <p className="font-medium text-gray-900 leading-tight">{product.title}</p>
+                      <p className="font-medium text-gray-900 leading-tight">
+                        {product.title}
+                      </p>
                       {product.description && (
-                        <p className="text-xs text-gray-400 mt-0.5 line-clamp-1">{product.description}</p>
+                        <p className="text-xs text-gray-400 mt-0.5 line-clamp-1">
+                          {product.description}
+                        </p>
                       )}
                     </td>
                     <td className="px-4 py-3 text-right whitespace-nowrap text-gray-600">
                       {formatCurrency(product.price)}
                       {product.unit && (
-                        <span className="text-gray-400 text-xs ml-1">/ {product.unit}</span>
+                        <span className="text-gray-400 text-xs ml-1">
+                          / {product.unit}
+                        </span>
                       )}
                     </td>
                     <td className="px-4 py-3">
@@ -231,16 +258,22 @@ export function ProductList({
                         <div className="flex items-center justify-center gap-2">
                           <button
                             type="button"
-                            onClick={() => onQuantityChange(product.id, Math.max(0, qty - 1))}
+                            onClick={() =>
+                              onQuantityChange(product.id, Math.max(0, qty - 1))
+                            }
                             className="w-8 h-8 rounded-full border-2 border-gray-300 text-gray-600 text-lg font-bold flex items-center justify-center active:scale-90 transition-transform"
                             aria-label="Restar uno"
                           >
                             −
                           </button>
-                          <span className="w-6 text-center font-semibold text-gray-900">{qty}</span>
+                          <span className="w-6 text-center font-semibold text-gray-900">
+                            {qty}
+                          </span>
                           <button
                             type="button"
-                            onClick={() => onQuantityChange(product.id, qty + 1)}
+                            onClick={() =>
+                              onQuantityChange(product.id, qty + 1)
+                            }
                             className="w-8 h-8 rounded-full bg-blue-600 text-white text-lg font-bold flex items-center justify-center active:scale-90 transition-transform"
                             aria-label="Sumar uno"
                           >
@@ -249,10 +282,14 @@ export function ProductList({
                         </div>
                       ) : qty > 0 ? (
                         <span className="flex justify-center">
-                          <span className="text-sm font-medium text-gray-500 bg-gray-100 px-3 py-0.5 rounded-full">x{qty}</span>
+                          <span className="text-sm font-medium text-gray-500 bg-gray-100 px-3 py-0.5 rounded-full">
+                            x{qty}
+                          </span>
                         </span>
                       ) : (
-                        <span className="flex justify-center text-gray-300 text-xs">—</span>
+                        <span className="flex justify-center text-gray-300 text-xs">
+                          —
+                        </span>
                       )}
                     </td>
                   </tr>
