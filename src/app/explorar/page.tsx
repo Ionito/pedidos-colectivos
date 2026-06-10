@@ -8,7 +8,8 @@
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { OrderList } from "@/components/orders/OrderList";
-import { useAuth, UserButton } from "@clerk/nextjs";
+import { useAuth } from "@clerk/nextjs";
+import { UserButtonWithSettings } from "@/components/UserButtonWithSettings";
 import Link from "next/link";
 
 export default function ExplorarPage() {
@@ -46,7 +47,7 @@ export default function ExplorarPage() {
             <Link href="/orders" className="text-sm text-blue-600 font-medium">
               Mis pedidos
             </Link>
-            <UserButton />
+            <UserButtonWithSettings />
           </div>
         )}
       </header>

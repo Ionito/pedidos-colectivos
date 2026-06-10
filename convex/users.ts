@@ -44,3 +44,23 @@ export const getMe = query({
       .unique();
   },
 });
+
+export const updateSettings = mutation({
+  args: {
+    phone: v.optional(v.string()),
+    notifyVia: v.optional(v.union(v.literal("email"), v.literal("phone"), v.literal("both"))),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Not authenticated");
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
+      .unique();
+    if (!user) throw new Error("User not found");
+    await ctx.db.patch(user._id, {
+      phone: args.phone,
+      notifyVia: args.notifyVia,
+    });
+  },
+});

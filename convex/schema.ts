@@ -7,6 +7,8 @@ export default defineSchema({
     email: v.string(),
     name: v.string(),
     imageUrl: v.optional(v.string()),
+    phone: v.optional(v.string()),
+    notifyVia: v.optional(v.union(v.literal("email"), v.literal("phone"), v.literal("both"))),
   }).index("by_clerk_id", ["clerkId"]),
 
   orders: defineTable({

@@ -12,8 +12,8 @@ export default function HomePage() {
     onScroll();
 
     // FAQ: single-open accordion
-    const faqs = Array.from(document.querySelectorAll(".faq-item"));
-    const handlers = [];
+    const faqs = Array.from(document.querySelectorAll<HTMLDetailsElement>(".faq-item"));
+    const handlers: [HTMLDetailsElement, () => void][] = [];
     faqs.forEach((d) => {
       const h = () => {
         if (d.open) faqs.forEach((o) => { if (o !== d) o.open = false; });
@@ -23,13 +23,13 @@ export default function HomePage() {
     });
 
     // smooth anchor scroll with header offset
-    const anchorClick = (e) => {
-      const a = e.target.closest('a[href^="#"]');
+    const anchorClick = (e: MouseEvent) => {
+      const a = (e.target as Element | null)?.closest('a[href^="#"]');
       if (!a) return;
       const id = a.getAttribute("href");
-      if (id.length > 1) {
+      if (id && id.length > 1) {
         const el = document.querySelector(id);
-        if (el) { e.preventDefault(); window.scrollTo({ top: el.offsetTop - 80, behavior: "smooth" }); }
+        if (el) { e.preventDefault(); window.scrollTo({ top: (el as HTMLElement).offsetTop - 80, behavior: "smooth" }); }
       }
     };
     document.addEventListener("click", anchorClick);
