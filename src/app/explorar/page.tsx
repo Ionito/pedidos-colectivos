@@ -17,13 +17,20 @@ export default function ExplorarPage() {
 
   return (
     <main className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200 px-4 py-4 flex justify-between items-center sticky top-0 z-10">
-        <div>
-          <Link href="/" className="text-xl font-bold text-blue-600 leading-none">
+      <header className="bg-white border-b px-4 py-3 flex justify-between items-center sticky top-0 z-10" style={{ borderColor: 'var(--line)' }}>
+        <Link href="/" className="flex items-center gap-2.5">
+          <div
+            className="w-9 h-9 rounded-xl flex items-center justify-center text-white relative overflow-hidden shrink-0"
+            style={{ background: 'var(--teal)', fontFamily: 'var(--pc-font-display)', fontSize: '16px', fontWeight: 800, boxShadow: 'var(--sh-sm)' }}
+          >
             PC
-          </Link>
-          <p className="text-xs text-gray-400">Pedidos Colectivos</p>
-        </div>
+            <span className="absolute right-[-5px] bottom-[-5px] w-4 h-4 rounded-md" style={{ background: 'var(--amber)' }} />
+          </div>
+          <div>
+            <p className="text-sm font-semibold leading-none" style={{ fontFamily: 'var(--pc-font-display)', color: 'var(--ink)' }}>Pedidos Colectivos</p>
+            <p className="text-xs mt-0.5" style={{ color: 'var(--muted)' }}>Compras en grupo, sin caos</p>
+          </div>
+        </Link>
 
         {!isSignedIn && (
           <Link

@@ -47,9 +47,9 @@ export default function OrderDetailPage() {
   if (order === undefined) {
     return (
       <main className="min-h-screen bg-gray-50">
-        <header className="bg-white border-b px-4 py-4 flex items-center gap-3">
-          <div className="h-6 w-6 bg-gray-200 rounded animate-pulse" />
-          <div className="h-5 w-32 bg-gray-200 rounded animate-pulse" />
+        <header className="bg-white border-b px-4 py-4 flex items-center gap-3" style={{ borderColor: 'var(--line)' }}>
+          <div className="h-6 w-6 rounded animate-pulse" style={{ background: 'var(--line)' }} />
+          <div className="h-5 w-32 rounded animate-pulse" style={{ background: 'var(--line)' }} />
         </header>
         <div className="px-4 py-6 max-w-lg mx-auto space-y-3">
           {[1, 2, 3, 4].map((i) => (
@@ -185,7 +185,7 @@ export default function OrderDetailPage() {
     <>
       <main className="min-h-screen bg-gray-50">
         {/* Header */}
-        <header className="bg-white border-b border-gray-200 px-4 py-4 flex items-center gap-3 sticky top-0 z-10">
+        <header className="bg-white border-b px-4 py-4 flex items-center gap-3 sticky top-0 z-10" style={{ borderColor: 'var(--line)' }}>
           <Link
             href="/orders"
             className="text-gray-500 min-h-[44px] min-w-[44px] flex items-center justify-center -ml-2"
@@ -196,7 +196,7 @@ export default function OrderDetailPage() {
             </svg>
           </Link>
           <div className="flex-1 min-w-0">
-            <h1 className="text-lg font-semibold text-gray-900 truncate">
+            <h1 className="text-lg font-semibold truncate" style={{ color: 'var(--ink)', fontFamily: 'var(--pc-font-display)' }}>
               {order.title}
             </h1>
           </div>

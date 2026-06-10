@@ -1,29 +1,104 @@
 @import "tailwindcss";
 
+/* ============================================================
+   Design tokens — shared across landing and app
+   ============================================================ */
 :root {
-  --background: #f9fafb;
-  --foreground: #111827;
+  /* Surfaces */
+  --bg:          #FBF7F1;
+  --bg-2:        #F4EEE4;
+  --surface:     #FFFFFF;
+  --surface-2:   #FCFAF6;
+
+  /* Ink */
+  --ink:         #211C17;
+  --ink-soft:    #5A5147;
+  --muted:       #978C7F;
+  --line:        #EBE3D7;
+  --line-2:      #E0D6C7;
+
+  /* Brand — Teal (participante) */
+  --teal:        #0E7C6B;
+  --teal-700:    #0A6052;
+  --teal-600:    #128573;
+  --teal-tint:   #E3F1ED;
+  --teal-tint-2: #D2E8E2;
+  --teal-ink:    #094a3f;
+
+  /* Brand — Amber (organizador) */
+  --amber:       #C2530F;
+  --amber-700:   #A4440B;
+  --amber-600:   #D2600F;
+  --amber-tint:  #FBEADD;
+  --amber-tint-2:#F6DBC6;
+  --amber-ink:   #7F3A0D;
+
+  /* States */
+  --green:       #15803D;
+  --green-tint:  #DDF3E3;
+  --orange:      #C2410C;
+  --red:         #C2412F;
+  --red-tint:    #FBE7E3;
+
+  /* Radius */
+  --r-sm: 10px;
+  --r:    16px;
+  --r-lg: 22px;
+  --r-xl: 28px;
+  --r-pill: 999px;
+
+  /* Shadows — warm */
+  --sh-sm: 0 1px 2px rgba(63,47,30,.06), 0 1px 3px rgba(63,47,30,.05);
+  --sh:    0 2px 6px rgba(63,47,30,.07), 0 8px 24px -12px rgba(63,47,30,.14);
+  --sh-lg: 0 12px 40px -12px rgba(63,47,30,.22), 0 4px 12px rgba(63,47,30,.06);
+
+  /* Typography — resolved from next/font variables with fallbacks */
+  --pc-font-display: var(--font-bricolage, "Bricolage Grotesque", system-ui, sans-serif);
+  --pc-font-sans:    var(--font-hanken, "Hanken Grotesk", system-ui, -apple-system, sans-serif);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --color-background: var(--bg);
+  --color-foreground: var(--ink);
+
+  /* Remap blue → teal (all bg-blue-*, text-blue-*, border-blue-*, ring-blue-*) */
+  --color-blue-50:  var(--teal-tint);
+  --color-blue-100: var(--teal-tint);
+  --color-blue-200: var(--teal-tint-2);
+  --color-blue-300: #6bbfb5;
+  --color-blue-400: #3ba99a;
+  --color-blue-500: var(--teal-600);
+  --color-blue-600: var(--teal);
+  --color-blue-700: var(--teal-700);
+  --color-blue-800: var(--teal-ink);
+  --color-blue-900: #063832;
+
+  /* Remap grays → warm palette */
+  --color-gray-50:  var(--bg);
+  --color-gray-100: var(--bg-2);
+  --color-gray-200: var(--line);
+  --color-gray-300: var(--line-2);
+  --color-gray-400: var(--muted);
+  --color-gray-500: var(--ink-soft);
+  --color-gray-600: #4A4139;
+  --color-gray-700: #3D3128;
+  --color-gray-800: #2E2520;
+  --color-gray-900: var(--ink);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-hanken, "Hanken Grotesk"), system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Smooth scrolling on mobile */
 * {
   -webkit-overflow-scrolling: touch;
 }
 
-/* Prevent text size adjustment on orientation change */
 html {
   -webkit-text-size-adjust: 100%;
 }

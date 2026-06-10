@@ -1,62 +1,8 @@
 /* ============================================================
    PC — Pedidos Colectivos · Landing styles (scoped under .pc-landing)
    Drop-in: import this in src/app/page.tsx
+   Design tokens now live in globals.css — no :root block needed here.
    ============================================================ */
-@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&display=swap');
-
-:root {
-  /* Surfaces */
-  --bg:          #FBF7F1;  /* warm cream page */
-  --bg-2:        #F4EEE4;  /* slightly deeper sand */
-  --surface:     #FFFFFF;
-  --surface-2:   #FCFAF6;
-
-  /* Ink */
-  --ink:         #211C17;  /* warm near-black */
-  --ink-soft:    #5A5147;  /* body soft */
-  --muted:       #978C7F;  /* captions */
-  --line:        #EBE3D7;  /* hairline */
-  --line-2:      #E0D6C7;  /* stronger border */
-
-  /* Brand / Participante (teal — "el que se suma") */
-  --teal:        #0E7C6B;
-  --teal-700:    #0A6052;
-  --teal-600:    #128573;
-  --teal-tint:   #E3F1ED;
-  --teal-tint-2: #D2E8E2;
-  --teal-ink:    #094a3f;
-
-  /* Organizador (terracota/ámbar — "el que organiza") */
-  --amber:       #C2530F;
-  --amber-700:   #A4440B;
-  --amber-600:   #D2600F;
-  --amber-tint:  #FBEADD;
-  --amber-tint-2:#F6DBC6;
-  --amber-ink:   #7F3A0D;
-
-  /* States */
-  --green:       #15803D;
-  --green-tint:  #DDF3E3;
-  --orange:      #C2410C;  /* urgency / deadline */
-  --red:         #C2412F;
-  --red-tint:    #FBE7E3;
-
-  /* Radius */
-  --r-sm: 10px;
-  --r:    16px;
-  --r-lg: 22px;
-  --r-xl: 28px;
-  --r-pill: 999px;
-
-  /* Shadow — warm, soft */
-  --sh-sm: 0 1px 2px rgba(63, 47, 30, .06), 0 1px 3px rgba(63, 47, 30, .05);
-  --sh:    0 2px 6px rgba(63, 47, 30, .07), 0 8px 24px -12px rgba(63, 47, 30, .14);
-  --sh-lg: 0 12px 40px -12px rgba(63, 47, 30, .22), 0 4px 12px rgba(63,47,30,.06);
-
-  /* Type */
-  --pc-font-display: "Bricolage Grotesque", system-ui, sans-serif;
-  --pc-font-sans: "Hanken Grotesk", system-ui, -apple-system, sans-serif;
-}
 
 .pc-landing {
   font-family: var(--pc-font-sans);

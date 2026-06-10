@@ -22,23 +22,23 @@ Con PC, el organizador crea un pedido, carga los productos disponibles y compart
 Al crear un pedido, podés pegar una lista como esta directamente en el campo de productos:
 
 ```
-_Langostinos desvenados $3500 x 100 grs
-_Langostinos enteros L1 $2800 x 100 grs
-_Camarones pre-cocidos $3800 x 100 grs
-_Mix de mariscos $35000 kg
+Langostinos desvenados $3500 x 100 grs
+Langostinos enteros $2800 x 100 grs
+Camarones pre-cocidos $3800 x 100 grs
+Mix de mariscos $35000 kg
 ```
 
 La app detecta el nombre, precio y unidad de cada línea y genera los productos automáticamente con una vista previa en tiempo real.
 
 ## Stack tecnológico
 
-| Capa | Tecnología |
-|---|---|
-| Frontend + Backend | Next.js 16 (App Router) |
-| Base de datos + tiempo real | Convex |
-| Autenticación | Clerk (Google + Facebook OAuth) |
-| Estilos | Tailwind CSS |
-| Deploy | Vercel |
+| Capa                        | Tecnología                      |
+| --------------------------- | ------------------------------- |
+| Frontend + Backend          | Next.js 16 (App Router)         |
+| Base de datos + tiempo real | Convex                          |
+| Autenticación               | Clerk (Google + Facebook OAuth) |
+| Estilos                     | Tailwind CSS                    |
+| Deploy                      | Vercel                          |
 
 ## Cómo correr el proyecto localmente
 

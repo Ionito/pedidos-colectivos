@@ -4,7 +4,7 @@ import Link from "next/link";
 export default function NewOrderPage() {
   return (
     <main className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200 px-4 py-4 flex items-center gap-3 sticky top-0 z-10">
+      <header className="bg-white border-b px-4 py-4 flex items-center gap-3 sticky top-0 z-10" style={{ borderColor: 'var(--line)' }}>
         <Link
           href="/orders"
           className="text-gray-500 min-h-[44px] min-w-[44px] flex items-center justify-center -ml-2"
@@ -24,7 +24,7 @@ export default function NewOrderPage() {
             />
           </svg>
         </Link>
-        <h1 className="text-lg font-semibold text-gray-900">Nuevo pedido</h1>
+        <h1 className="text-lg font-semibold" style={{ color: 'var(--ink)', fontFamily: 'var(--pc-font-display)' }}>Nuevo pedido</h1>
       </header>
 
       <div className="px-4 py-6 max-w-lg mx-auto">
