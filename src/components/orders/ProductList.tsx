@@ -3,6 +3,7 @@
 import { formatCurrency } from "@/lib/formatters";
 import { useState } from "react";
 import { useGridCols } from "@/hooks/useGridCols";
+import { Search, LayoutGrid, List, ChevronLeft, ChevronRight } from "lucide-react";
 
 const ROWS = 7; // filas visibles por página
 const TABLE_PAGE_SIZE = 30;
@@ -75,19 +76,7 @@ export function ProductList({
       {/* Search + view toggle */}
       <div className="flex items-center gap-2 mb-4">
         <div className="relative flex-1">
-          <svg
-            className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"
-            />
-          </svg>
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
           <input
             type="search"
             value={search}
@@ -108,12 +97,7 @@ export function ProductList({
             aria-label="Vista grilla"
             className={`p-2.5 transition-colors ${viewMode === "grid" ? "bg-blue-600 text-white" : "text-gray-400 hover:text-gray-700"}`}
           >
-            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
-              <rect x="1" y="1" width="6" height="6" rx="1" />
-              <rect x="9" y="1" width="6" height="6" rx="1" />
-              <rect x="1" y="9" width="6" height="6" rx="1" />
-              <rect x="9" y="9" width="6" height="6" rx="1" />
-            </svg>
+            <LayoutGrid className="w-4 h-4" />
           </button>
           <button
             type="button"
@@ -124,19 +108,7 @@ export function ProductList({
             aria-label="Vista tabla"
             className={`p-2.5 transition-colors ${viewMode === "table" ? "bg-blue-600 text-white" : "text-gray-400 hover:text-gray-700"}`}
           >
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2}
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M4 6h16M4 10h16M4 14h16M4 18h16"
-              />
-            </svg>
+            <List className="w-4 h-4" />
           </button>
         </div>
       </div>
@@ -308,19 +280,7 @@ export function ProductList({
             disabled={effectivePage === 0}
             className="flex items-center gap-1 text-sm text-gray-500 disabled:opacity-30 hover:text-gray-800 transition-colors min-h-[44px] px-2"
           >
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
+            <ChevronLeft className="w-4 h-4" />
             Anterior
           </button>
 
@@ -334,19 +294,7 @@ export function ProductList({
             className="flex items-center gap-1 text-sm text-gray-500 disabled:opacity-30 hover:text-gray-800 transition-colors min-h-[44px] px-2"
           >
             Siguiente
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
+            <ChevronRight className="w-4 h-4" />
           </button>
         </div>
       )}

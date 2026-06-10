@@ -5,6 +5,7 @@ import { useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import type { Id } from "../../../convex/_generated/dataModel";
 import { useState, useEffect } from "react";
+import { X, Search, Minus, Plus, Check, Share, CircleOff, Trash2 } from "lucide-react";
 
 interface User {
   _id: string;
@@ -146,18 +147,14 @@ function AddProductModal({
             onClick={onClose}
             className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 rounded-full"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
+            <X className="w-[18px] h-[18px]" />
           </button>
         </div>
 
         {/* Buscador */}
         <div className="px-4 py-2 border-b border-gray-100 shrink-0">
           <div className="flex items-center gap-2 bg-gray-100 rounded-xl px-3 py-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400 shrink-0">
-              <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
+            <Search className="w-3.5 h-3.5 text-gray-400 shrink-0" />
             <input
               type="text"
               value={search}
@@ -168,7 +165,7 @@ function AddProductModal({
             />
             {search && (
               <button onClick={() => setSearch("")} className="text-gray-400 hover:text-gray-600">
-                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                <X className="w-3 h-3" strokeWidth={2.5} />
               </button>
             )}
           </div>
@@ -198,7 +195,7 @@ function AddProductModal({
                     disabled={qty === 0}
                     className="w-7 h-7 rounded-full border border-gray-200 bg-white flex items-center justify-center text-gray-500 hover:border-blue-400 hover:text-blue-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="5" y1="12" x2="19" y2="12" /></svg>
+                    <Minus className="w-3 h-3" strokeWidth={2.5} />
                   </button>
                   <span className={`w-6 text-center text-sm font-semibold ${qty > 0 ? "text-blue-600" : "text-gray-300"}`}>
                     {qty}
@@ -207,7 +204,7 @@ function AddProductModal({
                     onClick={() => setQty(product.id, +1)}
                     className="w-7 h-7 rounded-full border border-gray-200 bg-white flex items-center justify-center text-gray-500 hover:border-blue-400 hover:text-blue-600 transition-colors"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+                    <Plus className="w-3 h-3" strokeWidth={2.5} />
                   </button>
                 </div>
               </div>
@@ -387,15 +384,9 @@ export function ParticipantList({ items, products, meId, isOwner, orderId, shipp
                         title="Copiar resumen del pedido"
                       >
                         {copiedUserId === userId ? (
-                          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <polyline points="20 6 9 17 4 12" />
-                          </svg>
+                          <Check className="w-3 h-3" strokeWidth={2.5} />
                         ) : (
-                          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
-                            <polyline points="16 6 12 2 8 6" />
-                            <line x1="12" y1="2" x2="12" y2="15" />
-                          </svg>
+                          <Share className="w-3 h-3" />
                         )}
                       </button>
                     )}
@@ -455,10 +446,7 @@ export function ParticipantList({ items, products, meId, isOwner, orderId, shipp
                               }`}
                               title={isUnavailable ? "Marcar como disponible" : "Marcar como no disponible"}
                             >
-                              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <circle cx="12" cy="12" r="10" />
-                                <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" />
-                              </svg>
+                              <CircleOff className="w-3 h-3" />
                             </button>
                           )}
 
@@ -469,13 +457,7 @@ export function ParticipantList({ items, products, meId, isOwner, orderId, shipp
                               className="text-red-300 hover:text-red-500 transition-colors"
                               aria-label={`Eliminar ${product.title}`}
                             >
-                              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <polyline points="3 6 5 6 21 6" />
-                                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
-                                <path d="M10 11v6" />
-                                <path d="M14 11v6" />
-                                <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
-                              </svg>
+                              <Trash2 className="w-3 h-3" />
                             </button>
                           )}
                         </div>

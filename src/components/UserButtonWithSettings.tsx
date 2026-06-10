@@ -4,6 +4,7 @@ import { UserButton, useUser } from "@clerk/nextjs";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { useState, useEffect } from "react";
+import { Check, Bell } from "lucide-react";
 
 // ── Settings form — rendered inside Clerk's UserProfilePage ──────────────────
 function NotificationSettings() {
@@ -221,9 +222,7 @@ function NotificationSettings() {
       >
         {saved ? (
           <>
-            <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-            </svg>
+            <Check className="w-4 h-4" strokeWidth={2.5} />
             ¡Guardado!
           </>
         ) : saving ? "Guardando..." : "Guardar cambios"}
@@ -234,11 +233,7 @@ function NotificationSettings() {
 
 // ── Bell icon for the sidebar ────────────────────────────────────────────────
 function BellIcon() {
-  return (
-    <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-    </svg>
-  );
+  return <Bell className="w-4 h-4" />;
 }
 
 // ── Exported wrapper ─────────────────────────────────────────────────────────

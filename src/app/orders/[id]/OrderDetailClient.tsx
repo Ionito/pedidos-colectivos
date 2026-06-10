@@ -10,6 +10,7 @@ import { EditOrderModal } from "@/components/orders/EditOrderModal";
 import { formatDate, formatDeadline, formatCurrency } from "@/lib/formatters";
 import Link from "next/link";
 import { useState } from "react";
+import { ChevronLeft, Pencil, Check, Link as LinkIcon, Copy } from "lucide-react";
 
 type Tab = "productos" | "participantes" | "totales";
 
@@ -191,9 +192,7 @@ export default function OrderDetailPage() {
             className="text-gray-500 min-h-[44px] min-w-[44px] flex items-center justify-center -ml-2"
             aria-label="Volver"
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
+            <ChevronLeft className="w-6 h-6" />
           </Link>
           <div className="flex-1 min-w-0">
             <h1 className="text-lg font-semibold truncate" style={{ color: 'var(--ink)', fontFamily: 'var(--pc-font-display)' }}>
@@ -208,10 +207,7 @@ export default function OrderDetailPage() {
               className="min-h-[44px] min-w-[44px] flex items-center justify-center text-gray-400 hover:text-blue-600"
               aria-label="Editar pedido"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-              </svg>
+              <Pencil className="w-5 h-5" />
             </button>
           )}
           <span
@@ -295,16 +291,12 @@ export default function OrderDetailPage() {
             >
               {linkCopied ? (
                 <>
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                  </svg>
+                  <Check className="w-4 h-4" strokeWidth={2.5} />
                   ¡Link copiado!
                 </>
               ) : (
                 <>
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                  </svg>
+                  <LinkIcon className="w-4 h-4" />
                   Compartir pedido
                 </>
               )}
@@ -397,16 +389,12 @@ export default function OrderDetailPage() {
                   >
                     {copied ? (
                       <>
-                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                        </svg>
+                        <Check className="w-3.5 h-3.5" strokeWidth={2.5} />
                         ¡Copiado!
                       </>
                     ) : (
                       <>
-                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-4 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                        </svg>
+                        <Copy className="w-3.5 h-3.5" />
                         Copiar resumen
                       </>
                     )}

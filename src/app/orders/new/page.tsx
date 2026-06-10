@@ -1,5 +1,6 @@
 import { OrderForm } from "@/components/orders/OrderForm";
 import Link from "next/link";
+import { ChevronLeft } from "lucide-react";
 
 export default function NewOrderPage() {
   return (
@@ -10,19 +11,7 @@ export default function NewOrderPage() {
           className="text-gray-500 min-h-[44px] min-w-[44px] flex items-center justify-center -ml-2"
           aria-label="Volver"
         >
-          <svg
-            className="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M15 19l-7-7 7-7"
-            />
-          </svg>
+          <ChevronLeft className="w-6 h-6" />
         </Link>
         <h1 className="text-lg font-semibold" style={{ color: 'var(--ink)', fontFamily: 'var(--pc-font-display)' }}>Nuevo pedido</h1>
       </header>

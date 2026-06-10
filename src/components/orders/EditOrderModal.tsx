@@ -6,6 +6,7 @@ import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
 import { parseProductList, ParsedProduct } from "@/lib/parseProducts";
 import { formatCurrency } from "@/lib/formatters";
+import { X } from "lucide-react";
 
 interface Product {
   id: string;
@@ -120,9 +121,7 @@ export function EditOrderModal({ order, onClose }: Props) {
             className="w-9 h-9 flex items-center justify-center rounded-full text-gray-400 hover:bg-gray-100"
             aria-label="Cerrar"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
+            <X className="w-5 h-5" />
           </button>
         </div>
 
@@ -236,9 +235,7 @@ export function EditOrderModal({ order, onClose }: Props) {
                         className="shrink-0 w-8 h-8 flex items-center justify-center text-red-400 hover:text-red-600 hover:bg-red-50 rounded-full"
                         aria-label={`Eliminar ${p.title}`}
                       >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                        </svg>
+                        <X className="w-4 h-4" />
                       </button>
                     </div>
                   ))}
