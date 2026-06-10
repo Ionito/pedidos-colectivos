@@ -10,7 +10,14 @@ import { EditOrderModal } from "@/components/orders/EditOrderModal";
 import { formatDate, formatDeadline, formatCurrency } from "@/lib/formatters";
 import Link from "next/link";
 import { useState } from "react";
-import { ChevronLeft, Pencil, Check, Link as LinkIcon, Copy } from "lucide-react";
+import {
+  ChevronLeft,
+  Pencil,
+  Check,
+  Link as LinkIcon,
+  Copy,
+} from "lucide-react";
+import { Button } from "@/components/ui/Button";
 
 type Tab = "productos" | "participantes" | "totales";
 
@@ -20,17 +27,19 @@ export default function OrderDetailPage() {
 
   // Public queries (no auth needed)
   const order = useQuery(api.orders.getById, { id: id as Id<"orders"> });
-  const items = useQuery(api.orderItems.listByOrder, { orderId: id as Id<"orders"> });
+  const items = useQuery(api.orderItems.listByOrder, {
+    orderId: id as Id<"orders">,
+  });
 
   // Auth-gated queries — skip until Convex has the token
   const myItems = useQuery(
     api.orderItems.myItemsForOrder,
-    isAuthenticated ? { orderId: id as Id<"orders"> } : "skip"
+    isAuthenticated ? { orderId: id as Id<"orders"> } : "skip",
   );
   const me = useQuery(api.users.getMe, isAuthenticated ? {} : "skip");
   const creator = useQuery(
     api.users.getById,
-    order ? { id: order.createdBy } : "skip"
+    order ? { id: order.createdBy } : "skip",
   );
 
   const upsertItem = useMutation(api.orderItems.upsertItem);
@@ -48,13 +57,25 @@ export default function OrderDetailPage() {
   if (order === undefined) {
     return (
       <main className="min-h-screen bg-gray-50">
-        <header className="bg-white border-b px-4 py-4 flex items-center gap-3" style={{ borderColor: 'var(--line)' }}>
-          <div className="h-6 w-6 rounded animate-pulse" style={{ background: 'var(--line)' }} />
-          <div className="h-5 w-32 rounded animate-pulse" style={{ background: 'var(--line)' }} />
+        <header
+          className="bg-white border-b px-4 py-4 flex items-center gap-3"
+          style={{ borderColor: "var(--line)" }}
+        >
+          <div
+            className="h-6 w-6 rounded animate-pulse"
+            style={{ background: "var(--line)" }}
+          />
+          <div
+            className="h-5 w-32 rounded animate-pulse"
+            style={{ background: "var(--line)" }}
+          />
         </header>
         <div className="px-4 py-6 max-w-lg mx-auto space-y-3">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="h-20 bg-white rounded-2xl border animate-pulse" />
+            <div
+              key={i}
+              className="h-20 bg-white rounded-2xl border animate-pulse"
+            />
           ))}
         </div>
       </main>
@@ -68,7 +89,10 @@ export default function OrderDetailPage() {
         <div className="text-center px-4">
           <p className="text-4xl mb-3">❓</p>
           <p className="text-gray-500">Pedido no encontrado</p>
-          <Link href="/orders" className="text-blue-600 text-sm mt-3 inline-block">
+          <Link
+            href="/orders"
+            className="text-blue-600 text-sm mt-3 inline-block"
+          >
             Volver a pedidos
           </Link>
         </div>
@@ -81,7 +105,8 @@ export default function OrderDetailPage() {
   const deadlinePassed = order.deadline < Date.now();
 
   async function handleClose() {
-    if (!confirm("¿Cerrar este pedido? Ya no se podrán sumar más personas.")) return;
+    if (!confirm("¿Cerrar este pedido? Ya no se podrán sumar más personas."))
+      return;
     setIsClosing(true);
     try {
       await closeOrder({ id: id as Id<"orders"> });
@@ -91,7 +116,12 @@ export default function OrderDetailPage() {
   }
 
   async function handleDelete() {
-    if (!confirm(`¿Borrar el pedido "${order?.title}"?\n\nEsta acción es permanente y eliminará todos los datos del pedido.`)) return;
+    if (
+      !confirm(
+        `¿Borrar el pedido "${order?.title}"?\n\nEsta acción es permanente y eliminará todos los datos del pedido.`,
+      )
+    )
+      return;
     setIsDeleting(true);
     try {
       await removeOrder({ id: id as Id<"orders"> });
@@ -119,18 +149,34 @@ export default function OrderDetailPage() {
   }
 
   // ── Totales por producto ──────────────────────────────────────────
-  const productMap: Record<string, { title: string; price: number; unit: string }> = {};
+  const productMap: Record<
+    string,
+    { title: string; price: number; unit: string }
+  > = {};
   for (const p of order.products) {
     productMap[p.id] = { title: p.title, price: p.price, unit: p.unit };
   }
 
-  const totalsByProduct: Record<string, { title: string; price: number; unit: string; availableQty: number; unavailableQty: number }> = {};
-  for (const item of (items ?? [])) {
+  const totalsByProduct: Record<
+    string,
+    {
+      title: string;
+      price: number;
+      unit: string;
+      availableQty: number;
+      unavailableQty: number;
+    }
+  > = {};
+  for (const item of items ?? []) {
     if (item.quantity === 0) continue;
     const product = productMap[item.productId];
     if (!product) continue;
     if (!totalsByProduct[item.productId]) {
-      totalsByProduct[item.productId] = { ...product, availableQty: 0, unavailableQty: 0 };
+      totalsByProduct[item.productId] = {
+        ...product,
+        availableQty: 0,
+        unavailableQty: 0,
+      };
     }
     if (item.unavailable) {
       totalsByProduct[item.productId].unavailableQty += item.quantity;
@@ -141,7 +187,7 @@ export default function OrderDetailPage() {
   const totalsRows = Object.entries(totalsByProduct);
   const grandTotal = totalsRows.reduce(
     (sum, [, row]) => sum + row.price * row.availableQty,
-    0
+    0,
   );
 
   function buildSummary() {
@@ -149,7 +195,9 @@ export default function OrderDetailPage() {
     for (const [, row] of totalsRows) {
       if (row.availableQty === 0) continue; // excluir totalmente no disponibles
       const subtotal = formatCurrency(row.price * row.availableQty);
-      lines.push(`• ${row.title}: ${row.availableQty} ${row.unit} × ${formatCurrency(row.price)} = ${subtotal}`);
+      lines.push(
+        `• ${row.title}: ${row.availableQty} ${row.unit} × ${formatCurrency(row.price)} = ${subtotal}`,
+      );
     }
     lines.push("");
     lines.push(`💰 Total: ${formatCurrency(grandTotal)}`);
@@ -186,7 +234,10 @@ export default function OrderDetailPage() {
     <>
       <main className="min-h-screen bg-gray-50">
         {/* Header */}
-        <header className="bg-white border-b px-4 py-4 flex items-center gap-3 sticky top-0 z-10" style={{ borderColor: 'var(--line)' }}>
+        <header
+          className="bg-white border-b px-4 py-4 flex items-center gap-3 sticky top-0 z-10"
+          style={{ borderColor: "var(--line)" }}
+        >
           <Link
             href="/orders"
             className="text-gray-500 min-h-[44px] min-w-[44px] flex items-center justify-center -ml-2"
@@ -195,24 +246,33 @@ export default function OrderDetailPage() {
             <ChevronLeft className="w-6 h-6" />
           </Link>
           <div className="flex-1 min-w-0">
-            <h1 className="text-lg font-semibold truncate" style={{ color: 'var(--ink)', fontFamily: 'var(--pc-font-display)' }}>
+            <h1
+              className="text-lg font-semibold truncate"
+              style={{
+                color: "var(--ink)",
+                fontFamily: "var(--pc-font-display)",
+              }}
+            >
               {order.title}
             </h1>
           </div>
 
           {/* Edit button — only for owner */}
           {isOwner && (
-            <button
+            <Button
               onClick={() => setShowEdit(true)}
-              className="min-h-[44px] min-w-[44px] flex items-center justify-center text-gray-400 hover:text-blue-600"
+              className="min-h-[44px] min-w-[44px] flex items-center justify-center "
               aria-label="Editar pedido"
             >
               <Pencil className="w-5 h-5" />
-            </button>
+              <span>Editar pedido</span>
+            </Button>
           )}
           <span
             className={`shrink-0 text-xs font-medium px-2 py-1 rounded-full ${
-              isOpen ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"
+              isOpen
+                ? "bg-green-100 text-green-700"
+                : "bg-gray-100 text-gray-500"
             }`}
           >
             {isOpen ? "Abierto" : "Cerrado"}
@@ -220,7 +280,6 @@ export default function OrderDetailPage() {
         </header>
 
         <div className="px-4 py-5 max-w-2xl mx-auto space-y-6">
-
           {/* Order info card */}
           <div className="bg-white rounded-2xl border border-gray-200 px-4 py-4 space-y-3">
             {order.description && (
@@ -237,7 +296,9 @@ export default function OrderDetailPage() {
                     : "text-gray-700"
                 }
               >
-                {isOpen ? formatDeadline(order.deadline) : formatDate(order.deadline)}
+                {isOpen
+                  ? formatDeadline(order.deadline)
+                  : formatDate(order.deadline)}
               </span>
             </div>
 
@@ -245,7 +306,9 @@ export default function OrderDetailPage() {
             {order.shippingCost != null && order.shippingCost > 0 && (
               <div className="flex items-center gap-2 text-sm">
                 <span className="text-gray-400">🚚 Envío:</span>
-                <span className="text-gray-700">{formatCurrency(order.shippingCost)}</span>
+                <span className="text-gray-700">
+                  {formatCurrency(order.shippingCost)}
+                </span>
               </div>
             )}
 
@@ -280,53 +343,61 @@ export default function OrderDetailPage() {
             </div>
 
             {/* Share */}
-            <button
+            <Button
               type="button"
               onClick={handleShare}
-              className={`w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium border transition-all min-h-[44px] ${
+              variant="ghost"
+              size="md"
+              fullWidth
+              className={
                 linkCopied
-                  ? "bg-green-50 border-green-200 text-green-600"
-                  : "bg-white border-gray-200 text-gray-600 hover:border-blue-300 hover:text-blue-600"
-              }`}
+                  ? "bg-green-50 border-green-200 text-green-600 hover:border-green-200"
+                  : ""
+              }
             >
               {linkCopied ? (
                 <>
-                  <Check className="w-4 h-4" strokeWidth={2.5} />
-                  ¡Link copiado!
+                  <Check className="w-4 h-4" strokeWidth={2.5} /> ¡Link copiado!
                 </>
               ) : (
                 <>
-                  <LinkIcon className="w-4 h-4" />
-                  Compartir pedido
+                  <LinkIcon className="w-4 h-4" /> Compartir pedido
                 </>
               )}
-            </button>
+            </Button>
 
             {/* Owner actions */}
             {isOwner && (
               <div className="flex gap-2 pt-1">
                 {isOpen && (
-                  <button
+                  <Button
                     onClick={handleClose}
-                    disabled={isClosing || isDeleting}
-                    className="flex-1 border border-gray-300 text-gray-600 py-2.5 rounded-xl text-sm font-medium min-h-[44px] disabled:opacity-50"
+                    disabled={isDeleting}
+                    loading={isClosing}
+                    variant="ghost"
+                    size="md"
+                    stretch
                   >
                     {isClosing ? "Cerrando..." : "Cerrar pedido"}
-                  </button>
+                  </Button>
                 )}
-                <button
+                <Button
                   onClick={handleDelete}
-                  disabled={isDeleting || isClosing}
-                  className="flex-1 bg-red-50 border border-red-200 text-red-500 py-2.5 rounded-xl text-sm font-medium min-h-[44px] disabled:opacity-50"
+                  disabled={isClosing}
+                  loading={isDeleting}
+                  variant="danger"
+                  size="md"
+                  stretch
                 >
                   {isDeleting ? "Borrando..." : "Borrar pedido"}
-                </button>
+                </Button>
               </div>
             )}
 
             {deadlinePassed && isOpen && (
               <p className="text-xs text-orange-500">
-                ⚠️ El plazo venció, pero el pedido sigue abierto hasta que el organizador lo cierre.
+                ⚠️ El plazo venció, pero el pedido sigue abierto hasta que el
+                organizador lo cierre.
               </p>
             )}
           </div>
@@ -414,19 +485,35 @@ export default function OrderDetailPage() {
                       <div
                         key={productId}
                         className={`bg-white rounded-2xl border px-4 py-3 flex items-center justify-between ${
-                          allUnavailable ? "border-gray-100 opacity-50" : "border-gray-200"
+                          allUnavailable
+                            ? "border-gray-100 opacity-50"
+                            : "border-gray-200"
                         }`}
                       >
                         <div className="min-w-0 flex-1">
-                          <p className={`font-medium text-sm ${allUnavailable ? "line-through text-gray-400" : "text-gray-900"}`}>
+                          <p
+                            className={`font-medium text-sm ${allUnavailable ? "line-through text-gray-400" : "text-gray-900"}`}
+                          >
                             {row.title}
                           </p>
-                          <p className={`text-xs mt-0.5 ${allUnavailable ? "line-through text-gray-300" : "text-gray-400"}`}>
-                            {allUnavailable ? row.unavailableQty : row.availableQty} {row.unit} × {formatCurrency(row.price)}
+                          <p
+                            className={`text-xs mt-0.5 ${allUnavailable ? "line-through text-gray-300" : "text-gray-400"}`}
+                          >
+                            {allUnavailable
+                              ? row.unavailableQty
+                              : row.availableQty}{" "}
+                            {row.unit} × {formatCurrency(row.price)}
                           </p>
                         </div>
-                        <span className={`text-sm font-semibold shrink-0 ml-3 ${allUnavailable ? "line-through text-gray-300" : "text-blue-600"}`}>
-                          {formatCurrency(row.price * (allUnavailable ? row.unavailableQty : row.availableQty))}
+                        <span
+                          className={`text-sm font-semibold shrink-0 ml-3 ${allUnavailable ? "line-through text-gray-300" : "text-blue-600"}`}
+                        >
+                          {formatCurrency(
+                            row.price *
+                              (allUnavailable
+                                ? row.unavailableQty
+                                : row.availableQty),
+                          )}
                         </span>
                       </div>
                     );
@@ -434,7 +521,9 @@ export default function OrderDetailPage() {
 
                   {/* Grand total */}
                   <div className="bg-blue-600 rounded-2xl px-4 py-3 flex items-center justify-between mt-3">
-                    <span className="text-sm font-semibold text-white">Total general</span>
+                    <span className="text-sm font-semibold text-white">
+                      Total general
+                    </span>
                     <span className="text-base font-bold text-white">
                       {formatCurrency(grandTotal)}
                     </span>
@@ -448,10 +537,7 @@ export default function OrderDetailPage() {
 
       {/* Edit modal */}
       {showEdit && (
-        <EditOrderModal
-          order={order}
-          onClose={() => setShowEdit(false)}
-        />
+        <EditOrderModal order={order} onClose={() => setShowEdit(false)} />
       )}
     </>
   );

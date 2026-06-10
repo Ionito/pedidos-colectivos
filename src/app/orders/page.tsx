@@ -4,7 +4,7 @@ import { useQuery, useConvexAuth } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { OrderList } from "@/components/orders/OrderList";
 import { UserButtonWithSettings } from "@/components/UserButtonWithSettings";
-import Link from "next/link";
+import { LinkButton } from "@/components/ui/Button";
 import { useState } from "react";
 
 type StatusFilter = "open" | "closed" | undefined;
@@ -71,12 +71,9 @@ export default function OrdersPage() {
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <Link
-            href="/orders/new"
-            className="bg-blue-600 text-white px-4 py-2.5 rounded-xl text-sm font-semibold min-h-[44px] flex items-center gap-1"
-          >
+          <LinkButton href="/orders/new" size="md">
             <span>+</span> Crear pedido
-          </Link>
+          </LinkButton>
           <UserButtonWithSettings />
         </div>
       </header>

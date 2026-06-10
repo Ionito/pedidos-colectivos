@@ -6,6 +6,7 @@ import { api } from "../../../convex/_generated/api";
 import type { Id } from "../../../convex/_generated/dataModel";
 import { useState, useEffect } from "react";
 import { X, Search, Minus, Plus, Check, Share, CircleOff, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/Button";
 
 interface User {
   _id: string;
@@ -214,13 +215,15 @@ function AddProductModal({
 
         {/* Footer */}
         <div className="px-4 py-3 border-t border-gray-100 shrink-0">
-          <button
+          <Button
             onClick={handleSave}
-            disabled={!hasChanges || saving}
-            className="w-full bg-blue-600 text-white rounded-xl py-3 text-sm font-semibold disabled:opacity-40 disabled:cursor-not-allowed hover:bg-blue-700 transition-colors"
+            disabled={!hasChanges}
+            loading={saving}
+            size="lg"
+            fullWidth
           >
             {saving ? "Guardando..." : "Guardar cambios"}
-          </button>
+          </Button>
         </div>
       </div>
     </div>

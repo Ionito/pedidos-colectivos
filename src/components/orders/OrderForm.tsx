@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { api } from "../../../convex/_generated/api";
 import { ProductParserInput } from "./ProductParserInput";
 import { ParsedProduct } from "@/lib/parseProducts";
+import { Button } from "@/components/ui/Button";
 
 export function OrderForm() {
   const router = useRouter();
@@ -122,17 +123,19 @@ export function OrderForm() {
         </div>
       )}
 
-      <button
+      <Button
         type="submit"
         disabled={!canSubmit}
-        className="w-full bg-blue-600 text-white py-4 rounded-xl font-semibold text-base min-h-[52px] disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98] transition-transform"
+        loading={isSubmitting}
+        size="xl"
+        fullWidth
       >
         {isSubmitting
           ? "Creando pedido..."
           : products.length === 0
           ? "Agregá productos para continuar"
           : `Crear pedido con ${products.length} producto${products.length !== 1 ? "s" : ""}`}
-      </button>
+      </Button>
     </form>
   );
 }

@@ -11,6 +11,7 @@ import { OrderList } from "@/components/orders/OrderList";
 import { useAuth } from "@clerk/nextjs";
 import { UserButtonWithSettings } from "@/components/UserButtonWithSettings";
 import Link from "next/link";
+import { LinkButton } from "@/components/ui/Button";
 
 export default function ExplorarPage() {
   const orders = useQuery(api.orders.listOpen);
@@ -34,12 +35,7 @@ export default function ExplorarPage() {
         </Link>
 
         {!isSignedIn && (
-          <Link
-            href="/sign-in"
-            className="bg-blue-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold min-h-[44px] flex items-center"
-          >
-            Ingresar
-          </Link>
+          <LinkButton href="/sign-in" size="md">Ingresar</LinkButton>
         )}
 
         {isSignedIn && (
@@ -68,16 +64,13 @@ export default function ExplorarPage() {
         />
 
         {!isSignedIn && (
-          <div className="mt-8 bg-blue-50 rounded-2xl p-5 text-center">
+          <div className="mt-8 rounded-2xl p-5 text-center" style={{ background: 'var(--teal-tint)' }}>
             <p className="text-sm text-gray-600 mb-3">
               Ingresá para sumarte a pedidos o crear el tuyo
             </p>
-            <Link
-              href="/sign-in"
-              className="inline-block bg-blue-600 text-white px-6 py-3 rounded-xl text-sm font-semibold min-h-[44px]"
-            >
+            <LinkButton href="/sign-in" size="lg">
               Ingresar con Google o Facebook
-            </Link>
+            </LinkButton>
           </div>
         )}
       </div>

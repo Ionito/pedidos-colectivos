@@ -7,6 +7,7 @@ import { Id } from "../../../convex/_generated/dataModel";
 import { parseProductList, ParsedProduct } from "@/lib/parseProducts";
 import { formatCurrency } from "@/lib/formatters";
 import { X } from "lucide-react";
+import { Button } from "@/components/ui/Button";
 
 interface Product {
   id: string;
@@ -273,16 +274,19 @@ export function EditOrderModal({ order, onClose }: Props) {
                   </div>
                 )}
 
-                <button
+                <Button
                   type="button"
                   onClick={handleAddParsed}
                   disabled={!parsed || parsed.products.length === 0}
-                  className="mt-3 w-full bg-gray-900 text-white py-2.5 rounded-xl text-sm font-medium min-h-[44px] disabled:opacity-30"
+                  variant="dark"
+                  size="md"
+                  fullWidth
+                  className="mt-3"
                 >
                   {parsed && parsed.products.length > 0
                     ? `Agregar ${parsed.products.length} producto${parsed.products.length !== 1 ? "s" : ""}`
                     : "Agregar productos"}
-                </button>
+                </Button>
               </div>
             </div>
           )}
@@ -296,21 +300,25 @@ export function EditOrderModal({ order, onClose }: Props) {
             </div>
           )}
           <div className="flex gap-3">
-            <button
+            <Button
               type="button"
               onClick={onClose}
-              className="flex-1 border border-gray-300 text-gray-700 py-3 rounded-xl font-medium text-base min-h-[50px]"
+              variant="ghost"
+              size="lg"
+              stretch
             >
               Cancelar
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
               onClick={handleSave}
-              disabled={isSaving || !title.trim() || products.length === 0}
-              className="flex-1 bg-blue-600 text-white py-3 rounded-xl font-semibold text-base min-h-[50px] disabled:opacity-40"
+              disabled={!title.trim() || products.length === 0}
+              loading={isSaving}
+              size="lg"
+              stretch
             >
               {isSaving ? "Guardando..." : "Guardar cambios"}
-            </button>
+            </Button>
           </div>
         </div>
 
