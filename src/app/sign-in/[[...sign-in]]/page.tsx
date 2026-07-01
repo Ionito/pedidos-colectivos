@@ -17,7 +17,7 @@ export default function SignInPage() {
             <p className="text-sm mt-0.5" style={{ color: 'var(--muted)' }}>Compras en grupo, sin caos</p>
           </div>
         </div>
-        <SignIn />
+        <SignIn fallbackRedirectUrl="/explorar" />
       </div>
     </div>
   );

@@ -45,7 +45,7 @@ export function OrderCard({ order, showJoinButton = true }: OrderCardProps) {
         </div>
 
         {order.description && (
-          <p className="text-sm text-gray-500 mt-1 line-clamp-2">
+          <p className="text-sm text-gray-500 mt-1 line-clamp-2 whitespace-pre-line">
             {order.description}
           </p>
         )}

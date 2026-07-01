@@ -283,7 +283,7 @@ export default function OrderDetailPage() {
           {/* Order info card */}
           <div className="bg-white rounded-2xl border border-gray-200 px-4 py-4 space-y-3">
             {order.description && (
-              <p className="text-sm text-gray-600">{order.description}</p>
+              <p className="text-sm text-gray-600 whitespace-pre-line">{order.description}</p>
             )}
 
             {/* Deadline */}
