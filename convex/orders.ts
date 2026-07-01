@@ -21,24 +21,24 @@ export const listOpen = query({
   },
 });
 
-// AUTHENTICATED: Full list for logged-in users
+// AUTHENTICATED: Orders created by the current user (any status)
 export const list = query({
-  args: {
-    status: v.optional(v.union(v.literal("open"), v.literal("closed"))),
-  },
-  handler: async (ctx, args) => {
+  args: {},
+  handler: async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) throw new Error("No autenticado");
 
-    if (args.status) {
-      return ctx.db
-        .query("orders")
-        .withIndex("by_status", (q) => q.eq("status", args.status!))
-        .order("desc")
-        .collect();
-    }
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
+      .unique();
+    if (!user) throw new Error("Usuario no encontrado");
 
-    return ctx.db.query("orders").order("desc").collect();
+    return ctx.db
+      .query("orders")
+      .withIndex("by_created_by", (q) => q.eq("createdBy", user._id))
+      .order("desc")
+      .collect();
   },
 });
 
