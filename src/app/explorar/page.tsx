@@ -20,7 +20,7 @@ export default function ExplorarPage() {
   return (
     <main className="min-h-screen bg-gray-50">
       <header className="bg-white border-b px-4 py-3 flex justify-between items-center sticky top-0 z-10" style={{ borderColor: 'var(--line)' }}>
-        <Link href="/" className="flex items-center gap-2.5">
+        <Link href={isSignedIn ? "/explorar" : "/"} className="flex items-center gap-2.5">
           <div
             className="w-9 h-9 rounded-xl flex items-center justify-center text-white relative overflow-hidden shrink-0"
             style={{ background: 'var(--teal)', fontFamily: 'var(--pc-font-display)', fontSize: '16px', fontWeight: 800, boxShadow: 'var(--sh-sm)' }}

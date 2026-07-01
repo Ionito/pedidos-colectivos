@@ -6,6 +6,7 @@ import { OrderList } from "@/components/orders/OrderList";
 import { UserButtonWithSettings } from "@/components/UserButtonWithSettings";
 import { LinkButton } from "@/components/ui/Button";
 import { useState } from "react";
+import Link from "next/link";
 
 type StatusFilter = "open" | "closed" | undefined;
 
@@ -43,7 +44,7 @@ export default function OrdersPage() {
         className="bg-white border-b border-gray-200 px-4 py-3 flex justify-between items-center sticky top-0 z-10"
         style={{ borderColor: "var(--line)" }}
       >
-        <div className="flex items-center gap-2.5">
+        <Link href="/explorar" className="flex items-center gap-2.5">
           <div
             className="w-9 h-9 rounded-xl flex items-center justify-center text-white font-bold text-sm shrink-0 relative overflow-hidden"
             style={{
@@ -74,7 +75,7 @@ export default function OrdersPage() {
               Compras en grupo, sin caos
             </p>
           </div>
-        </div>
+        </Link>
         <div className="flex items-center gap-3">
           <LinkButton href="/orders/new" size="md">
             <span>+</span> Crear pedido
