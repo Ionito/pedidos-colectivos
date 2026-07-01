@@ -32,7 +32,7 @@ const SIZE: Record<ButtonSize, string> = {
 };
 
 const BASE =
-  "inline-flex items-center justify-center gap-2 font-semibold " +
+  "inline-flex items-center justify-center gap-2 font-semibold cursor-pointer " +
   "transition-all active:scale-[0.98] " +
   "disabled:opacity-40 disabled:cursor-not-allowed select-none";
 
