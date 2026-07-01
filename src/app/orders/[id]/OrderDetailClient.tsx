@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery, useMutation, useConvexAuth } from "convex/react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
 import { ProductList } from "@/components/orders/ProductList";
@@ -23,7 +23,18 @@ type Tab = "productos" | "participantes" | "totales";
 
 export default function OrderDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const router = useRouter();
   const { isAuthenticated, isLoading: isAuthLoading } = useConvexAuth();
+
+  // Go back to wherever the user came from (e.g. /explorar or /orders).
+  // Falls back to /explorar when there's no in-app history (e.g. direct/shared link).
+  const handleBack = () => {
+    if (typeof window !== "undefined" && window.history.length > 1) {
+      router.back();
+    } else {
+      router.push("/explorar");
+    }
+  };
 
   // Public queries (no auth needed)
   const order = useQuery(api.orders.getById, { id: id as Id<"orders"> });
@@ -238,13 +249,14 @@ export default function OrderDetailPage() {
           className="bg-white border-b px-4 py-4 flex items-center gap-3 sticky top-0 z-10"
           style={{ borderColor: "var(--line)" }}
         >
-          <Link
-            href="/orders"
+          <button
+            type="button"
+            onClick={handleBack}
             className="text-gray-500 min-h-[44px] min-w-[44px] flex items-center justify-center -ml-2"
             aria-label="Volver"
           >
             <ChevronLeft className="w-6 h-6" />
-          </Link>
+          </button>
           <div className="flex-1 min-w-0">
             <h1
               className="text-lg font-semibold truncate"
@@ -331,14 +343,6 @@ export default function OrderDetailPage() {
                 <span className="font-medium text-gray-800">
                   {isOwner ? "vos" : (creator?.name ?? "...")}
                 </span>
-                {creator?.email && !isOwner && (
-                  <a
-                    href={`mailto:${creator.email}`}
-                    className="ml-2 text-blue-500 text-xs underline underline-offset-2"
-                  >
-                    Contactar
-                  </a>
-                )}
               </div>
             </div>
 
